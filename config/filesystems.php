@@ -1,5 +1,11 @@
 <?php
 
+$defaultDisk = env('FILESYSTEM_DISK', 'public');
+
+if ($defaultDisk === 'local') {
+    $defaultDisk = 'public';
+}
+
 return [
 
     /*
@@ -13,7 +19,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'public'),
+    'default' => $defaultDisk,
 
     /*
     |--------------------------------------------------------------------------
