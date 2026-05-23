@@ -938,7 +938,7 @@ class CustomFieldController extends Controller
                     }
 
                     // Validate image path exists
-                    if (! Storage::disk(config('filesystems.default'))->exists($image)) {
+                    if (! Storage::disk('public')->exists($image)) {
                         $errors[] = "Row $rowNumber: Image path does not exist: $image";
                         $errorCount++;
 
@@ -1074,7 +1074,7 @@ class CustomFieldController extends Controller
         ResponseService::noPermissionThenSendJson('custom-field-list');
 
         try {
-            $files = Storage::disk(config('filesystems.default'))->files($this->uploadFolder);
+            $files = Storage::disk('public')->files($this->uploadFolder);
             $images = [];
 
             foreach ($files as $file) {
@@ -1089,8 +1089,8 @@ class CustomFieldController extends Controller
 
             // Sort by modification time, newest first
             usort($images, function ($a, $b) {
-                $timeA = Storage::disk(config('filesystems.default'))->lastModified($a['path']);
-                $timeB = Storage::disk(config('filesystems.default'))->lastModified($b['path']);
+                $timeA = Storage::disk('public')->lastModified($a['path']);
+                $timeB = Storage::disk('public')->lastModified($b['path']);
 
                 return $timeB <=> $timeA;
             });
@@ -1519,7 +1519,7 @@ class CustomFieldController extends Controller
                             }
 
                             // Validate image path exists (if provided and not empty)
-                            if (! empty($image) && ! Storage::disk(config('filesystems.default'))->exists($image)) {
+                            if (! empty($image) && ! Storage::disk('public')->exists($image)) {
                                 if (count($errors) < $maxErrorsToReturn) {
                                     $errors[] = ['row' => $rowNumber, 'message' => "Image path does not exist: $image"];
                                 }
