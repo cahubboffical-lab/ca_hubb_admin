@@ -48,6 +48,28 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 |
 */
 
+Route::get('storage/{path}', static function (string $path) {
+    if (str_contains($path, '..')) {
+        abort(404);
+    }
+
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+
+    $publicFile = storage_path('app/public/'.$path);
+    if (is_file($publicFile)) {
+        return response()->file($publicFile);
+    }
+
+    $legacyFile = storage_path('app/'.$path);
+    if (is_file($legacyFile)) {
+        return response()->file($legacyFile);
+    }
+
+    abort(404);
+})->where('path', '.*');
+
 Auth::routes();
 Route::get('/', static function () {
     if (Auth::user()) {
