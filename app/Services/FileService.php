@@ -27,7 +27,7 @@ class FileService
         $filenameWithoutExt = pathinfo($requestFile->getClientOriginalName(), PATHINFO_FILENAME);
         $extension = strtolower($requestFile->getClientOriginalExtension());
         $fileName = time() . '-' . Str::slug($filenameWithoutExt) . '.' . $extension;
-        $disk = config('filesystems.default');
+        $disk = 'public';
         $path = $folder . '/' . $fileName;
 
         try {
@@ -96,7 +96,7 @@ class FileService
     public static function upload($requestFile, $folder)
     {
         $file_name = uniqid('', true) . time() . '.' . $requestFile->getClientOriginalExtension();
-        Storage::disk(config('filesystems.default'))->putFileAs($folder, $requestFile, $file_name);
+        Storage::disk('public')->putFileAs($folder, $requestFile, $file_name);
         return $folder . '/' . $file_name;
     }
 
@@ -162,8 +162,8 @@ class FileService
     public static function delete($image)
     {
 
-        if (!empty($image) && Storage::disk(config('filesystems.default'))->exists($image)) {
-            return Storage::disk(config('filesystems.default'))->delete($image);
+        if (!empty($image) && Storage::disk('public')->exists($image)) {
+            return Storage::disk('public')->delete($image);
         }
 
         //Image does not exist in server so feel free to upload new image
@@ -204,7 +204,7 @@ class FileService
                     $image->insert($watermark, 'center');
                 }
 
-                Storage::disk(config('filesystems.default'))->put($folder . '/' . $file_name, (string)$image->encode());
+                Storage::disk('public')->put($folder . '/' . $file_name, (string)$image->encode());
             } else {
                 // Else assign file as it is
                 $file = $requestFile;
@@ -253,7 +253,7 @@ class FileService
                 }
 
 
-                Storage::disk(config('filesystems.default'))->put($folder . '/' . $file_name, (string)$image->encode());
+                Storage::disk('public')->put($folder . '/' . $file_name, (string)$image->encode());
             } else {
 
                 $file = $requestFile;
