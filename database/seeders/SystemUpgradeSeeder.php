@@ -31,6 +31,14 @@ class SystemUpgradeSeeder extends Seeder
             'user-package'                => [
                 'only' => ['list']
             ],
+            'car-inspection-request'      => [
+                'only' => ['list']
+            ],
+            'car-inspection-package'      => '*',
+            'sell-for-me-request'         => [
+                'only' => ['list']
+            ],
+            'sell-for-me-package'         => '*',
             'payment-transactions'        => [
                 'only' => ['list']
             ],
@@ -51,6 +59,7 @@ class SystemUpgradeSeeder extends Seeder
             ],
             'tip'                         => '*',
             'blog'                        => '*',
+            'news'                        => '*',
             'currency'                    => '*',
             'country'                     => '*',
             'state'                       => '*',

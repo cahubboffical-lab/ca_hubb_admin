@@ -12,9 +12,11 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstallerController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PlaceController;
+use App\Http\Controllers\ServicePackageController;
 use App\Http\Controllers\ReportReasonController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SellerController;
@@ -351,6 +353,21 @@ Route::group(['middleware' => ['auth', 'language']], static function () {
     Route::resource('package', PackageController::class);
     /*** Package Module : ENDS ***/
 
+    /*** Service Package Module : START ***/
+    Route::prefix('service-packages/{section}')
+        ->whereIn('section', ['car-inspection', 'sell-for-me'])
+        ->group(static function () {
+            Route::get('/requests', [ServicePackageController::class, 'requests'])->name('service-packages.requests');
+            Route::get('/packages', [ServicePackageController::class, 'index'])->name('service-packages.packages.index');
+            Route::get('/packages/create', [ServicePackageController::class, 'create'])->name('service-packages.packages.create');
+            Route::post('/packages', [ServicePackageController::class, 'store'])->name('service-packages.packages.store');
+            Route::get('/packages/table', [ServicePackageController::class, 'show'])->name('service-packages.packages.show');
+            Route::get('/packages/{servicePackage}/edit', [ServicePackageController::class, 'edit'])->whereNumber('servicePackage')->name('service-packages.packages.edit');
+            Route::put('/packages/{servicePackage}', [ServicePackageController::class, 'update'])->whereNumber('servicePackage')->name('service-packages.packages.update');
+            Route::delete('/packages/{servicePackage}', [ServicePackageController::class, 'destroy'])->whereNumber('servicePackage')->name('service-packages.packages.destroy');
+        });
+    /*** Service Package Module : END ***/
+
     /*** Report Reason Module : START ***/
     Route::group(['prefix' => 'report-reasons'], static function () {
         Route::get('/user-report', [ReportReasonController::class, 'usersReports'])->name('report-reasons.user-reports.index');
@@ -382,6 +399,10 @@ Route::group(['middleware' => ['auth', 'language']], static function () {
     /*** Blog Module : END ***/
     Route::resource('blog', BlogController::class);
     /*** Blog Module : END ***/
+
+    /*** News Module : START ***/
+    Route::resource('news', NewsController::class);
+    /*** News Module : END ***/
 
     Route::resource('faq', FaqController::class);
 

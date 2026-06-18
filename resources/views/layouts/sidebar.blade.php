@@ -110,6 +110,61 @@
                     @endcan
                 @endcanany
 
+                @canany([
+                    'car-inspection-request-list',
+                    'car-inspection-package-list',
+                    'car-inspection-package-create',
+                    'car-inspection-package-update',
+                    'car-inspection-package-delete',
+                    'sell-for-me-request-list',
+                    'sell-for-me-package-list',
+                    'sell-for-me-package-create',
+                    'sell-for-me-package-update',
+                    'sell-for-me-package-delete',
+                ])
+                    <div class="sidebar-new-title">{{ __('Service Management') }}</div>
+
+                    @canany(['car-inspection-request-list', 'car-inspection-package-list', 'car-inspection-package-create', 'car-inspection-package-update', 'car-inspection-package-delete'])
+                        <div class="sidebar-new-title mt-2">{{ __('Car Inspection') }}</div>
+                        @can('car-inspection-request-list')
+                            <li class="sidebar-item sidebar-submenus">
+                                <a href="{{ route('service-packages.requests', ['section' => 'car-inspection']) }}" class='sidebar-link'>
+                                    <i class="bi bi-inbox"></i>
+                                    <span class="menu-item">{{ __('Requests') }}</span>
+                                </a>
+                            </li>
+                        @endcan
+                        @canany(['car-inspection-package-list', 'car-inspection-package-create', 'car-inspection-package-update', 'car-inspection-package-delete'])
+                            <li class="sidebar-item sidebar-submenus">
+                                <a href="{{ route('service-packages.packages.index', ['section' => 'car-inspection']) }}" class='sidebar-link'>
+                                    <i class="bi bi-box-seam"></i>
+                                    <span class="menu-item">{{ __('Packages') }}</span>
+                                </a>
+                            </li>
+                        @endcanany
+                    @endcanany
+
+                    @canany(['sell-for-me-request-list', 'sell-for-me-package-list', 'sell-for-me-package-create', 'sell-for-me-package-update', 'sell-for-me-package-delete'])
+                        <div class="sidebar-new-title mt-2">{{ __('Sell for Me') }}</div>
+                        @can('sell-for-me-request-list')
+                            <li class="sidebar-item sidebar-submenus">
+                                <a href="{{ route('service-packages.requests', ['section' => 'sell-for-me']) }}" class='sidebar-link'>
+                                    <i class="bi bi-inbox"></i>
+                                    <span class="menu-item">{{ __('Requests') }}</span>
+                                </a>
+                            </li>
+                        @endcan
+                        @canany(['sell-for-me-package-list', 'sell-for-me-package-create', 'sell-for-me-package-update', 'sell-for-me-package-delete'])
+                            <li class="sidebar-item sidebar-submenus">
+                                <a href="{{ route('service-packages.packages.index', ['section' => 'sell-for-me']) }}" class='sidebar-link'>
+                                    <i class="bi bi-box-seam"></i>
+                                    <span class="menu-item">{{ __('Packages') }}</span>
+                                </a>
+                            </li>
+                        @endcanany
+                    @endcanany
+                @endcanany
+
                 @canany(['seller-verification-field-list', 'seller-verification-field-create',
                     'seller-verification-field-update', 'seller-verification-field-delete',
                     'seller-verification-request-list', 'seller-verification-request-create',
@@ -287,14 +342,25 @@
                         </li>
                     @endcanany
                 @endcanany
-                @canany(['blog-ist', 'blog-create', 'blog-update', 'blog-delete'])
-                    <div class="sidebar-new-title">{{ __('Blog Management') }}</div>
-                    <li class="sidebar-item">
-                        <a href="{{ route('blog.index') }}" class='sidebar-link'>
-                            <i class="bi bi-pencil"></i>
-                            <span class="menu-item">{{ __('Blogs') }}</span>
-                        </a>
-                    </li>
+                @canany(['blog-list', 'blog-create', 'blog-update', 'blog-delete', 'news-list', 'news-create',
+                    'news-update', 'news-delete'])
+                    <div class="sidebar-new-title">{{ __('Content Management') }}</div>
+                    @canany(['blog-list', 'blog-create', 'blog-update', 'blog-delete'])
+                        <li class="sidebar-item">
+                            <a href="{{ route('blog.index') }}" class='sidebar-link'>
+                                <i class="bi bi-pencil"></i>
+                                <span class="menu-item">{{ __('Blogs') }}</span>
+                            </a>
+                        </li>
+                    @endcanany
+                    @canany(['news-list', 'news-create', 'news-update', 'news-delete'])
+                        <li class="sidebar-item">
+                            <a href="{{ route('news.index') }}" class='sidebar-link'>
+                                <i class="bi bi-newspaper"></i>
+                                <span class="menu-item">{{ __('News') }}</span>
+                            </a>
+                        </li>
+                    @endcanany
                 @endcanany
 
                 @canany(['faq-create', 'faq-list', 'faq-update', 'faq-delete'])

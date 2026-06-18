@@ -23,9 +23,11 @@ use App\Models\ItemImages;
 use App\Models\ItemOffer;
 use App\Models\JobApplication;
 use App\Models\Language;
+use App\Models\News;
 use App\Models\Notifications;
 use App\Models\NumberOtp;
 use App\Models\Package;
+use App\Models\ServicePackage;
 use App\Models\PaymentConfiguration;
 use App\Models\PaymentTransaction;
 use App\Models\ReportReason;
@@ -495,6 +497,46 @@ class ApiController extends Controller
             ResponseService::successResponse(__('Data Fetched Successfully'), $packages);
         } catch (Throwable $th) {
             ResponseService::logErrorResponse($th, 'API Controller -> getPackage');
+            ResponseService::errorResponse();
+        }
+    }
+
+    public function getServicePackages(Request $request)
+    {
+        $validator = Validator::make($request->toArray(), [
+            'type' => 'required|in:car_inspection,sell_for_me',
+        ]);
+
+        if ($validator->fails()) {
+            ResponseService::validationError($validator->errors()->first());
+        }
+
+        try {
+            $packages = ServicePackage::with(['creator', 'updater'])
+                ->where('type', $request->type)
+                ->orderBy('id', 'ASC')
+                ->get()
+                ->map(static function ($package) {
+                    return [
+                        'id' => $package->id,
+                        'name' => $package->name,
+                        'features' => $package->features ?? [],
+                        'icon' => $package->icon,
+                        'price' => $package->price,
+                        'type' => $package->type,
+                        'type_label' => $package->type_label,
+                        'created_at' => optional($package->created_at)->toDateTimeString(),
+                        'updated_at' => optional($package->updated_at)->toDateTimeString(),
+                        'created_by' => $package->created_by,
+                        'updated_by' => $package->updated_by,
+                        'created_by_name' => $package->creator?->name,
+                        'updated_by_name' => $package->updater?->name,
+                    ];
+                });
+
+            ResponseService::successResponse(__('Data Fetched Successfully'), $packages);
+        } catch (Throwable $th) {
+            ResponseService::logErrorResponse($th, 'API Controller -> getServicePackages');
             ResponseService::errorResponse();
         }
     }
@@ -3074,6 +3116,37 @@ class ApiController extends Controller
         } catch (Throwable $th) {
             ResponseService::logErrorResponse($th, 'API Controller -> getTips');
             ResponseService::errorResponse();
+        }
+    }
+
+    public function getNews(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'news_id' => 'nullable|integer|exists:news,id',
+                'city_id' => 'nullable|integer|exists:cities,id',
+            ]);
+
+            if ($validator->fails()) {
+                ResponseService::validationError($validator->errors()->first());
+            }
+
+            $query = News::with(['city:id,name,state_id,country_id']);
+
+            if (! empty($request->news_id)) {
+                $news = $query->where('id', $request->news_id)->first();
+                ResponseService::successResponse(__('News fetched successfully'), $news);
+            }
+
+            if (! empty($request->city_id)) {
+                $query->where('city_id', $request->city_id);
+            }
+
+            $news = $query->orderByDesc('created_at')->get();
+            ResponseService::successResponse(__('News fetched successfully'), $news);
+        } catch (Throwable $th) {
+            ResponseService::logErrorResponse($th, 'API Controller -> getNews');
+            ResponseService::errorResponse(__('Failed to fetch news'));
         }
     }
 
