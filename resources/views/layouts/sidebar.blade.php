@@ -40,6 +40,7 @@
                             </a>
                         </li>
                     @endcanany
+
                 @endcanany
 
                 @canany(['item-list', 'item-create', 'item-update', 'item-delete', 'tip-list', 'tip-create',
@@ -111,6 +112,10 @@
                 @endcanany
 
                 @canany([
+                    'car-model-list',
+                    'car-model-create',
+                    'car-model-update',
+                    'car-model-delete',
                     'car-inspection-request-list',
                     'car-inspection-package-list',
                     'car-inspection-package-create',
@@ -123,6 +128,15 @@
                     'sell-for-me-package-delete',
                 ])
                     <div class="sidebar-new-title">{{ __('Service Management') }}</div>
+
+                    @canany(['car-model-list', 'car-model-create', 'car-model-update', 'car-model-delete'])
+                        <li class="sidebar-item sidebar-submenus">
+                            <a href="{{ route('car-models.index') }}" class='sidebar-link'>
+                                <i class="fa fa-car"></i>
+                                <span class="menu-item">{{ __('Car Models') }}</span>
+                            </a>
+                        </li>
+                    @endcanany
 
                     @canany(['car-inspection-request-list', 'car-inspection-package-list', 'car-inspection-package-create', 'car-inspection-package-update', 'car-inspection-package-delete'])
                         <div class="sidebar-new-title mt-2">{{ __('Car Inspection') }}</div>

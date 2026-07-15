@@ -60,6 +60,7 @@ class SystemUpgradeSeeder extends Seeder
             'tip'                         => '*',
             'blog'                        => '*',
             'news'                        => '*',
+            'car-model'                   => '*',
             'currency'                    => '*',
             'country'                     => '*',
             'state'                       => '*',

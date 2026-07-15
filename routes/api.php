@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Api\CarModelController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -75,6 +76,7 @@ Route::group(['middleware' => ['auth:sanctum']], static function () {
 /* Non Authenticated Routes */
 Route::get('user-exists', [ApiController::class, 'userExists']);
 Route::get('get-currencies', [ApiController::class, 'getCurrencies']);
+Route::get('get-car-models', [CarModelController::class, 'index']);
 Route::get('get-otp', [ApiController::class, 'getOtp']);
 Route::get('verify-otp', [ApiController::class, 'verifyOtp']);
 Route::get('get-package', [ApiController::class, 'getPackage']);

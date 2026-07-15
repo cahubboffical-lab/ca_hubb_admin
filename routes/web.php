@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CarModelController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\CurrencyController;
@@ -403,6 +404,12 @@ Route::group(['middleware' => ['auth', 'language']], static function () {
     /*** News Module : START ***/
     Route::resource('news', NewsController::class);
     /*** News Module : END ***/
+
+    /*** Car Model Module : START ***/
+    Route::get('car-models/export', [CarModelController::class, 'export'])->name('car-models.export');
+    Route::post('car-models/import', [CarModelController::class, 'import'])->name('car-models.import');
+    Route::resource('car-models', CarModelController::class);
+    /*** Car Model Module : END ***/
 
     Route::resource('faq', FaqController::class);
 
