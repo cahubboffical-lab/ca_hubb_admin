@@ -8,8 +8,8 @@ use App\Services\CarModelCsvService;
 use App\Services\ResponseService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -17,9 +17,7 @@ use Throwable;
 
 class CarModelController extends Controller
 {
-    public function __construct(private readonly CarModelCsvService $csvService)
-    {
-    }
+    public function __construct(private readonly CarModelCsvService $csvService) {}
 
     public function index()
     {

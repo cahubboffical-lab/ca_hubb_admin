@@ -4,9 +4,11 @@
 
 @section('page-title')
     <div class="page-title">
-        <div class="row align-items-center">
-            <div class="col-12 col-md-6"><h4 class="mb-0">@yield('title')</h4></div>
-            <div class="col-12 col-md-8">
+        <div class="row align-items-center g-3">
+            <div class="col">
+                <h4 class="mb-0">@yield('title')</h4>
+            </div>
+            <div class="col-12 col-lg-auto">
                 @include('car-models.partials.csv-actions')
             </div>
         </div>
@@ -14,6 +16,8 @@
 @endsection
 
 @section('content')
+    @include('car-models.partials.csv-import-modal')
+
     <section class="section">
         <div class="card">
             <div class="card-body">
@@ -24,9 +28,7 @@
                     data-show-refresh="true" data-trim-on-search="false" data-responsive="true"
                     data-sort-name="id" data-sort-order="desc" data-query-params="queryParams"
                     data-pagination-successively-size="3" data-table="car_models" data-mobile-responsive="true"
-                    data-show-export="true"
-                    data-export-options='{"fileName":"car-models-list","ignoreColumn":["operate"]}'
-                    data-export-types="['json', 'xml', 'csv', 'txt', 'sql', 'doc', 'excel']">
+                    data-show-export="false">
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col" data-field="id" data-sortable="true">{{ __('ID') }}</th>

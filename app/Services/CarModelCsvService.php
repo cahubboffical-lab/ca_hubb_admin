@@ -26,7 +26,7 @@ class CarModelCsvService
                 'created_by',
                 'updated_at',
                 'updated_by',
-            ]);
+            ], ',', '"', '');
 
             foreach (CarModel::orderBy('brand_name')->orderBy('name')->cursor() as $carModel) {
                 fputcsv($output, [
@@ -38,7 +38,7 @@ class CarModelCsvService
                     $carModel->created_by,
                     $carModel->updated_at?->toISOString(),
                     $carModel->updated_by,
-                ]);
+                ], ',', '"', '');
             }
 
             fclose($output);
@@ -55,7 +55,7 @@ class CarModelCsvService
         }
 
         try {
-            $header = fgetcsv($handle);
+            $header = fgetcsv($handle, null, ',', '"', '');
             if ($header === false) {
                 throw new InvalidArgumentException(__('The CSV file is empty.'));
             }
@@ -103,7 +103,7 @@ class CarModelCsvService
         $records = [];
         $line = 1;
 
-        while (($row = fgetcsv($handle)) !== false) {
+        while (($row = fgetcsv($handle, null, ',', '"', '')) !== false) {
             $line++;
             if ($this->isEmptyRow($row)) {
                 continue;

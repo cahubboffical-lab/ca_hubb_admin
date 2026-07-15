@@ -40,7 +40,6 @@
                             </a>
                         </li>
                     @endcanany
-
                 @endcanany
 
                 @canany(['item-list', 'item-create', 'item-update', 'item-delete', 'tip-list', 'tip-create',

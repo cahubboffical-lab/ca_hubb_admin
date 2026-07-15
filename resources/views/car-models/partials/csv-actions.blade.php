@@ -1,4 +1,4 @@
-<div class="d-flex flex-wrap justify-content-end align-items-center gap-2">
+<div class="d-flex flex-wrap justify-content-start justify-content-lg-end align-items-center gap-2">
     @can('car-model-list')
         <a class="btn btn-outline-primary" href="{{ route('car-models.export') }}">
             <i class="fas fa-file-export me-1"></i>{{ __('Export CSV') }}
@@ -6,15 +6,10 @@
     @endcan
 
     @canany(['car-model-create', 'car-model-update'])
-        <form action="{{ route('car-models.import') }}" method="POST" enctype="multipart/form-data"
-            class="d-flex flex-wrap align-items-center gap-2">
-            @csrf
-            <input type="file" name="csv_file" class="form-control" accept=".csv,text/csv" required
-                aria-label="{{ __('Select Car Models CSV') }}">
-            <button type="submit" class="btn btn-outline-success">
-                <i class="fas fa-file-import me-1"></i>{{ __('Import CSV') }}
-            </button>
-        </form>
+        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal"
+            data-bs-target="#carModelImportModal">
+            <i class="fas fa-file-import me-1"></i>{{ __('Import CSV') }}
+        </button>
     @endcanany
 
     @can('car-model-create')
