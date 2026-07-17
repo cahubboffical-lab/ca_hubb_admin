@@ -125,6 +125,8 @@
                     'sell-for-me-package-create',
                     'sell-for-me-package-update',
                     'sell-for-me-package-delete',
+                    'auction-sheet-verification-request-list',
+                    'auction-sheet-verification-request-update',
                 ])
                     <div class="sidebar-new-title">{{ __('Service Management') }}</div>
 
@@ -176,6 +178,16 @@
                             </li>
                         @endcanany
                     @endcanany
+
+                    @can('auction-sheet-verification-request-list')
+                        <div class="sidebar-new-title mt-2">{{ __('Auction Sheet Verification') }}</div>
+                        <li class="sidebar-item sidebar-submenus">
+                            <a href="{{ route('auction-sheet-verification.index') }}" class='sidebar-link'>
+                                <i class="bi bi-file-earmark-check"></i>
+                                <span class="menu-item">{{ __('Requests & Price') }}</span>
+                            </a>
+                        </li>
+                    @endcan
                 @endcanany
 
                 @canany(['seller-verification-field-list', 'seller-verification-field-create',

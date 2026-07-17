@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\AuctionSheetVerificationAdminController;
 use App\Http\Controllers\CarModelController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Controller;
@@ -372,6 +373,14 @@ Route::group(['middleware' => ['auth', 'language']], static function () {
             Route::delete('/packages/{servicePackage}', [ServicePackageController::class, 'destroy'])->whereNumber('servicePackage')->name('service-packages.packages.destroy');
         });
     /*** Service Package Module : END ***/
+
+    Route::prefix('auction-sheet-verification')->group(static function () {
+        Route::get('/', [AuctionSheetVerificationAdminController::class, 'index'])->name('auction-sheet-verification.index');
+        Route::get('/table', [AuctionSheetVerificationAdminController::class, 'table'])->name('auction-sheet-verification.table');
+        Route::put('/price', [AuctionSheetVerificationAdminController::class, 'updatePrice'])->name('auction-sheet-verification.price.update');
+        Route::get('/{auctionSheetVerificationRequest}', [AuctionSheetVerificationAdminController::class, 'show'])->whereNumber('auctionSheetVerificationRequest')->name('auction-sheet-verification.show');
+        Route::patch('/{auctionSheetVerificationRequest}/complete', [AuctionSheetVerificationAdminController::class, 'complete'])->whereNumber('auctionSheetVerificationRequest')->name('auction-sheet-verification.complete');
+    });
 
     /*** Report Reason Module : START ***/
     Route::group(['prefix' => 'report-reasons'], static function () {

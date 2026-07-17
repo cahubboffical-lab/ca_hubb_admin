@@ -6,32 +6,23 @@
 
 @section('css')
     <style>
-        .service-request-actions .dropdown-toggle {
-            min-width: 105px;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-
-        .service-request-actions .dropdown-menu {
-            min-width: 210px;
-            padding: 0.5rem;
-            border: 0;
-            border-radius: 10px;
-        }
-
-        .service-request-actions .dropdown-item {
-            padding: 0.6rem 0.75rem;
-            border-radius: 7px;
-        }
-
-        .service-request-actions .dropdown-item:hover {
-            background: #f3f5f9;
-        }
-
         #service-request-table td:last-child,
         #service-request-table th:last-child {
-            min-width: 135px;
+            min-width: 485px;
             text-align: center;
+        }
+
+        .service-request-actions {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            white-space: nowrap;
+        }
+
+        .service-request-actions .btn {
+            border-radius: 7px;
+            font-weight: 600;
         }
     </style>
 @endsection

@@ -39,6 +39,9 @@ class SystemUpgradeSeeder extends Seeder
                 'only' => ['list']
             ],
             'sell-for-me-package'         => '*',
+            'auction-sheet-verification-request' => [
+                'only' => ['list', 'update']
+            ],
             'payment-transactions'        => [
                 'only' => ['list']
             ],
