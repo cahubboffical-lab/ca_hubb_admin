@@ -136,20 +136,6 @@ class ServiceRequestAdminController extends Controller
 
     private function tableRow(string $section, ServiceRequest $serviceRequest): array
     {
-        $nextStatus = $serviceRequest->nextStatus();
-        $viewUrl = route('service-requests.show', ['section' => $section, 'requestId' => $serviceRequest->id]);
-        $statusUrl = route('service-requests.update-status', ['section' => $section, 'requestId' => $serviceRequest->id]);
-
-        $actions = '<button type="button" class="btn icon btn-xs btn-rounded btn-icon rounded-pill btn-primary view-request"'
-            .' data-url="'.e($viewUrl).'" title="'.e(__('View')).'"><i class="fa fa-eye"></i></button>&nbsp;&nbsp;';
-
-        if ($nextStatus !== null) {
-            $actions .= '<button type="button" class="btn icon btn-xs btn-rounded btn-icon rounded-pill btn-success update-request-status"'
-                .' data-url="'.e($statusUrl).'" data-status="'.e($nextStatus).'" data-label="'.e($this->statusLabel($nextStatus)).'"'
-                .' title="'.e(__('Mark as :status', ['status' => $this->statusLabel($nextStatus)])).'">'
-                .'<i class="fa fa-arrow-right"></i></button>';
-        }
-
         return [
             'id' => $serviceRequest->id,
             'full_name' => e($serviceRequest->full_name),
@@ -161,8 +147,61 @@ class ServiceRequestAdminController extends Controller
             'visit_date' => $serviceRequest->visit_date?->format('Y-m-d'),
             'visit_time' => e(substr((string) $serviceRequest->visit_start_time, 0, 5).' - '.substr((string) $serviceRequest->visit_end_time, 0, 5)),
             'created_at' => $serviceRequest->created_at?->format('Y-m-d H:i'),
-            'operate' => $actions,
+            'operate' => $this->renderActions($section, $serviceRequest),
         ];
+    }
+
+    private function renderActions(string $section, ServiceRequest $serviceRequest): string
+    {
+        $nextStatus = $serviceRequest->nextStatus();
+        $viewUrl = route('service-requests.show', ['section' => $section, 'requestId' => $serviceRequest->id]);
+        $statusUrl = route('service-requests.update-status', ['section' => $section, 'requestId' => $serviceRequest->id]);
+        $phone = preg_replace('/[^0-9+]/', '', $serviceRequest->phone_number) ?: '';
+        $whatsAppNumber = $this->whatsAppNumber($serviceRequest->phone_number);
+        $whatsAppMessage = rawurlencode(__('Hello :name, we are contacting you regarding your :service request on CA Hubb.', [
+            'name' => $serviceRequest->full_name,
+            'service' => $serviceRequest->serviceType() === 'car_inspection' ? __('Car Inspection') : __('Sell for Me'),
+        ]));
+
+        $actions = '<div class="dropdown service-request-actions">'
+            .'<button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" data-bs-boundary="viewport" aria-expanded="false">'
+            .'<i class="fas fa-ellipsis-h me-1"></i>'.e(__('Actions')).'</button>'
+            .'<ul class="dropdown-menu dropdown-menu-end shadow-sm">'
+            .'<li><button type="button" class="dropdown-item view-request" data-url="'.e($viewUrl).'">'
+            .'<i class="fas fa-eye text-primary me-2"></i>'.e(__('View Details')).'</button></li>'
+            .'<li><hr class="dropdown-divider"></li>'
+            .'<li><a class="dropdown-item" href="tel:'.e($phone).'">'
+            .'<i class="fas fa-phone-alt text-success me-2"></i>'.e(__('Call Customer')).'</a></li>'
+            .'<li><a class="dropdown-item" href="sms:'.e($phone).'">'
+            .'<i class="fas fa-comment-alt text-info me-2"></i>'.e(__('Send SMS')).'</a></li>'
+            .'<li><a class="dropdown-item" href="https://wa.me/'.e($whatsAppNumber).'?text='.$whatsAppMessage.'" target="_blank" rel="noopener noreferrer">'
+            .'<i class="fab fa-whatsapp text-success me-2"></i>'.e(__('Open WhatsApp')).'</a></li>';
+
+        if ($nextStatus !== null) {
+            $statusIcon = $nextStatus === ServiceRequest::STATUS_COMPLETED ? 'fas fa-check-circle' : 'fas fa-play-circle';
+            $statusClass = $nextStatus === ServiceRequest::STATUS_COMPLETED ? 'text-success' : 'text-primary';
+            $actions .= '<li><hr class="dropdown-divider"></li>'
+                .'<li><button type="button" class="dropdown-item update-request-status fw-semibold '.$statusClass.'"'
+                .' data-url="'.e($statusUrl).'" data-status="'.e($nextStatus).'" data-label="'.e($this->statusLabel($nextStatus)).'">'
+                .'<i class="'.$statusIcon.' me-2"></i>'.e(__('Mark as :status', ['status' => $this->statusLabel($nextStatus)])).'</button></li>';
+        }
+
+        return $actions.'</ul></div>';
+    }
+
+    private function whatsAppNumber(string $phoneNumber): string
+    {
+        $number = preg_replace('/\D+/', '', $phoneNumber) ?: '';
+
+        if (str_starts_with($number, '00')) {
+            return substr($number, 2);
+        }
+
+        if (str_starts_with($number, '0')) {
+            return '92'.substr($number, 1);
+        }
+
+        return $number;
     }
 
     private function detailData(ServiceRequest $serviceRequest): array

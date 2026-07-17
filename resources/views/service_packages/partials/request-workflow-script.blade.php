@@ -38,13 +38,21 @@
 
         $(document).on('click', '.update-request-status', async function () {
             const button = this;
+            const statusLabel = button.dataset.label;
+            const isCompleted = button.dataset.status === 'completed';
             const result = await Swal.fire({
-                title: @json(__('Confirm status change')),
-                text: @json(__('Are you sure you want to move this request to the selected next stage?')),
-                icon: 'warning',
+                title: `${@json(__('Mark as'))} ${statusLabel}?`,
+                text: isCompleted
+                    ? @json(__('This request will be marked as completed. This action cannot be reversed.'))
+                    : @json(__('This confirms that the customer has been contacted and moves the request to In Process.')),
+                icon: isCompleted ? 'success' : 'question',
                 showCancelButton: true,
-                confirmButtonText: @json(__('Yes, continue')),
+                confirmButtonText: `${@json(__('Yes, mark as'))} ${statusLabel}`,
                 cancelButtonText: @json(__('Cancel')),
+                confirmButtonColor: isCompleted ? '#198754' : '#435ebe',
+                cancelButtonColor: '#6c757d',
+                reverseButtons: true,
+                focusCancel: true,
             });
 
             if (!result.isConfirmed) {
