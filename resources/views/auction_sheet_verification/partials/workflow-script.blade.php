@@ -1,4 +1,6 @@
 <script>
+    @include('shared._request-table-toolbar-script')
+
     let activeAuctionVerificationStatus = 'pending';
 
     function auctionVerificationQueryParams(params) {
@@ -10,6 +12,8 @@
         const table = $('#auction-verification-table');
         const detailModal = new bootstrap.Modal(document.getElementById('auction-request-detail-modal'));
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        placeRequestFiltersInTableToolbar('#auction-verification-table', '#auction-status-tabs');
 
         $('#auction-status-tabs').on('click', '[data-status]', function () {
             activeAuctionVerificationStatus = this.dataset.status;

@@ -6,6 +6,8 @@
 
 @section('css')
     <style>
+        @include('shared._request-table-toolbar-styles')
+
         .auction-price-card {
             border: 1px solid #e8ebf1;
             border-radius: 12px;
@@ -67,7 +69,7 @@
 
         <div class="card">
             <div class="card-body">
-                <ul class="nav nav-pills mb-4" id="auction-status-tabs" role="tablist">
+                <ul class="nav nav-pills request-status-toolbar" id="auction-status-tabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" type="button" data-status="pending">{{ __('Pending') }}</button>
                     </li>

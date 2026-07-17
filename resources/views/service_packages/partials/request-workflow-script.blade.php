@@ -1,4 +1,6 @@
 <script>
+    @include('shared._request-table-toolbar-script')
+
     let activeServiceRequestStatus = 'pending';
 
     function serviceRequestQueryParams(params) {
@@ -11,6 +13,8 @@
         const modalElement = document.getElementById('service-request-detail-modal');
         const detailModal = new bootstrap.Modal(modalElement);
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        placeRequestFiltersInTableToolbar('#service-request-table', '#request-status-tabs');
 
         $('#request-status-tabs').on('click', '[data-status]', function () {
             activeServiceRequestStatus = this.dataset.status;

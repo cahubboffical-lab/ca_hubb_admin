@@ -6,6 +6,8 @@
 
 @section('css')
     <style>
+        @include('shared._request-table-toolbar-styles')
+
         #service-request-table td:last-child,
         #service-request-table th:last-child {
             min-width: 485px;
@@ -37,7 +39,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <ul class="nav nav-pills mb-4" id="request-status-tabs" role="tablist">
+                        <ul class="nav nav-pills request-status-toolbar" id="request-status-tabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" type="button" data-status="pending">{{ __('Pending') }}</button>
                             </li>

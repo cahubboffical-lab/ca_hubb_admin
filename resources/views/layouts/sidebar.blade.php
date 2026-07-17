@@ -184,7 +184,7 @@
                         <li class="sidebar-item sidebar-submenus">
                             <a href="{{ route('auction-sheet-verification.index') }}" class='sidebar-link'>
                                 <i class="bi bi-file-earmark-check"></i>
-                                <span class="menu-item">{{ __('Requests & Price') }}</span>
+                                <span class="menu-item">{{ __('Requests') }}</span>
                             </a>
                         </li>
                     @endcan
