@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Api\CarModelController;
+use App\Http\Controllers\Api\CarInspectionRequestController;
+use App\Http\Controllers\Api\SellForMeRequestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -74,6 +76,8 @@ Route::group(['middleware' => ['auth:sanctum']], static function () {
 });
 
 /* Non Authenticated Routes */
+Route::post('car-inspection-requests', [CarInspectionRequestController::class, 'store']);
+Route::post('sell-for-me-requests', [SellForMeRequestController::class, 'store']);
 Route::get('user-exists', [ApiController::class, 'userExists']);
 Route::get('get-currencies', [ApiController::class, 'getCurrencies']);
 Route::get('get-car-models', [CarModelController::class, 'index']);

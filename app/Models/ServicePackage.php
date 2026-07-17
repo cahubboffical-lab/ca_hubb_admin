@@ -12,6 +12,9 @@ class ServicePackage extends Model
 {
     use HasFactory;
 
+    public const TYPE_CAR_INSPECTION = 'car_inspection';
+    public const TYPE_SELL_FOR_ME = 'sell_for_me';
+
     protected $fillable = [
         'name',
         'features',

@@ -18,6 +18,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\ServicePackageController;
+use App\Http\Controllers\ServiceRequestAdminController;
 use App\Http\Controllers\ReportReasonController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SellerController;
@@ -359,6 +360,9 @@ Route::group(['middleware' => ['auth', 'language']], static function () {
         ->whereIn('section', ['car-inspection', 'sell-for-me'])
         ->group(static function () {
             Route::get('/requests', [ServicePackageController::class, 'requests'])->name('service-packages.requests');
+            Route::get('/requests/table', [ServiceRequestAdminController::class, 'table'])->name('service-requests.table');
+            Route::get('/requests/{requestId}', [ServiceRequestAdminController::class, 'show'])->whereNumber('requestId')->name('service-requests.show');
+            Route::patch('/requests/{requestId}/status', [ServiceRequestAdminController::class, 'updateStatus'])->whereNumber('requestId')->name('service-requests.update-status');
             Route::get('/packages', [ServicePackageController::class, 'index'])->name('service-packages.packages.index');
             Route::get('/packages/create', [ServicePackageController::class, 'create'])->name('service-packages.packages.create');
             Route::post('/packages', [ServicePackageController::class, 'store'])->name('service-packages.packages.store');

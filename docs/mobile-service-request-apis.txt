@@ -1,0 +1,287 @@
+MOBILE API HANDOFF
+CAR INSPECTION AND SELL FOR ME REQUESTS
+
+This document describes the two APIs used by the mobile application to submit Car Inspection and Sell for Me requests.
+
+The services use separate endpoints and separate database tables. The mobile application must not send a service_type field. The selected endpoint determines the service type.
+
+
+GENERAL INFORMATION
+
+Base URL:
+Use the same API base URL already configured in the mobile application.
+
+Request content type:
+multipart/form-data
+
+Recommended headers:
+Accept: application/json
+Content-Type: multipart/form-data
+Content-Language: en
+Authorization: Bearer USER_TOKEN
+
+Authentication is optional for both endpoints.
+
+If a valid Bearer token is supplied, the request is connected to the authenticated user. If no token is supplied, the request is stored as a guest request using the submitted full name and phone number.
+
+Do not send user_id. The backend obtains it from the Bearer token when available.
+
+All submitted text fields are trimmed by the backend.
+
+Dates are validated using the Asia/Karachi calendar date.
+
+Every new request receives the status pending automatically. The mobile application must not send status.
+
+The admin workflow is:
+pending to in_progress to completed
+
+
+DEPENDENCY APIS
+
+The mobile form can obtain selectable values from these existing APIs:
+
+Service packages:
+GET /api/get-service-packages?type=car_inspection
+GET /api/get-service-packages?type=sell_for_me
+
+Cities:
+GET /api/cities
+
+Car models:
+GET /api/get-car-models
+
+Selecting a package is optional. If a package ID is supplied, it must belong to the correct service. A Car Inspection package cannot be submitted to the Sell for Me API, and a Sell for Me package cannot be submitted to the Car Inspection API.
+
+
+API 1: CREATE CAR INSPECTION REQUEST
+
+Method:
+POST
+
+Endpoint:
+/api/car-inspection-requests
+
+Database table:
+car_inspection_requests
+
+Request fields:
+
+service_package_id
+Optional integer. It may be omitted or sent as null. If supplied, the ID must exist in service_packages and its type must be car_inspection.
+
+full_name
+Required string. Maximum 150 characters.
+
+phone_number
+Required string. Maximum 30 characters. Keep the value as text so plus signs, country codes, and leading zeroes are preserved.
+
+city_id
+Required integer. The ID must exist in cities.
+
+car_model_id
+Required integer. The ID must exist in car_models.
+
+model_year
+Required integer. Minimum 1990. Maximum is the current year in Asia/Karachi.
+
+car_variant
+Required string. Maximum 150 characters. Example: Grande 1.8 CVT.
+
+car_condition
+Required string. Allowed values are used and new.
+
+visit_area
+Required string. Maximum 255 characters. This is the area or address where the team should visit.
+
+visit_date
+Required date string in YYYY-MM-DD format. It cannot be earlier than the current date in Asia/Karachi.
+
+visit_start_time
+Required time string in HH:mm:ss format. Example: 10:00:00.
+
+visit_end_time
+Required time string in HH:mm:ss format. It must be later than visit_start_time. Example: 11:00:00.
+
+Do not send service_type, registration_area, user_id, status, created_at, or updated_at.
+
+Example multipart values represented as JSON for readability:
+
+{
+  "full_name": "Ali Khan",
+  "phone_number": "+923001234567",
+  "city_id": 4,
+  "car_model_id": 27,
+  "model_year": 2022,
+  "car_variant": "Grande 1.8 CVT",
+  "car_condition": "used",
+  "visit_area": "DHA Phase 6",
+  "visit_date": "2026-07-20",
+  "visit_start_time": "10:00:00",
+  "visit_end_time": "11:00:00"
+}
+
+Successful response:
+HTTP status 201 Created
+
+{
+  "error": false,
+  "message": "Service request submitted successfully.",
+  "data": {
+    "id": 101,
+    "service_type": "car_inspection",
+    "service_package_id": null,
+    "full_name": "Ali Khan",
+    "phone_number": "+923001234567",
+    "city_id": 4,
+    "car_model_id": 27,
+    "model_year": 2022,
+    "car_variant": "Grande 1.8 CVT",
+    "car_condition": "used",
+    "registration_area": null,
+    "visit_area": "DHA Phase 6",
+    "visit_date": "2026-07-20",
+    "visit_start_time": "10:00:00",
+    "visit_end_time": "11:00:00",
+    "status": "pending",
+    "created_at": "2026-07-17T12:00:00+00:00"
+  }
+}
+
+
+API 2: CREATE SELL FOR ME REQUEST
+
+Method:
+POST
+
+Endpoint:
+/api/sell-for-me-requests
+
+Database table:
+sell_for_me_requests
+
+This API uses all fields described for the Car Inspection API and adds registration_area.
+
+The service_package_id is optional. It may be omitted or sent as null. If supplied, it must belong to a package whose type is sell_for_me.
+
+Additional request field:
+
+registration_area
+Required string. Allowed values are exactly Punjab, KPK, Sindh, Balochistan, and AJK. The value is case-sensitive and must match one of these values.
+
+Do not send service_type, user_id, status, created_at, or updated_at.
+
+Example multipart values represented as JSON for readability:
+
+{
+  "service_package_id": 18,
+  "full_name": "Ali Khan",
+  "phone_number": "+923001234567",
+  "city_id": 4,
+  "car_model_id": 27,
+  "model_year": 2022,
+  "car_variant": "Grande 1.8 CVT",
+  "car_condition": "used",
+  "registration_area": "Punjab",
+  "visit_area": "DHA Phase 6",
+  "visit_date": "2026-07-20",
+  "visit_start_time": "14:00:00",
+  "visit_end_time": "15:00:00"
+}
+
+Successful response:
+HTTP status 201 Created
+
+{
+  "error": false,
+  "message": "Service request submitted successfully.",
+  "data": {
+    "id": 51,
+    "service_type": "sell_for_me",
+    "service_package_id": 18,
+    "full_name": "Ali Khan",
+    "phone_number": "+923001234567",
+    "city_id": 4,
+    "car_model_id": 27,
+    "model_year": 2022,
+    "car_variant": "Grande 1.8 CVT",
+    "car_condition": "used",
+    "registration_area": "Punjab",
+    "visit_area": "DHA Phase 6",
+    "visit_date": "2026-07-20",
+    "visit_start_time": "14:00:00",
+    "visit_end_time": "15:00:00",
+    "status": "pending",
+    "created_at": "2026-07-17T12:00:00+00:00"
+  }
+}
+
+
+VALIDATION ERROR RESPONSE
+
+HTTP status:
+422 Unprocessable Entity
+
+Response structure:
+
+{
+  "error": true,
+  "message": "The given data was invalid.",
+  "errors": {
+    "phone_number": [
+      "The phone number field is required."
+    ],
+    "visit_date": [
+      "The visit date must be a date after or equal to 2026-07-17."
+    ]
+  }
+}
+
+The errors object is keyed by field name. Each field contains an array of validation messages. The mobile application should show the first useful message for the relevant field or show the top-level message as a fallback.
+
+Package mismatch example when an optional package ID is supplied:
+
+{
+  "error": true,
+  "message": "The given data was invalid.",
+  "errors": {
+    "service_package_id": [
+      "The selected package does not match this service."
+    ]
+  }
+}
+
+
+SERVER ERROR RESPONSE
+
+HTTP status:
+500 Internal Server Error
+
+{
+  "error": true,
+  "message": "Unable to submit the service request. Please try again."
+}
+
+
+MOBILE IMPLEMENTATION NOTES
+
+Submit the form as multipart/form-data using the mobile application's existing API helper.
+
+Use the Car Inspection endpoint only for the Car Inspection flow and the Sell for Me endpoint only for the Sell for Me flow.
+
+Do not add service_type to either payload.
+
+When a package is selected, send its ID using the value returned by the service packages API. The service_package_id field may be omitted or sent as null when no package is selected. Other required ID values must use the IDs returned by their respective APIs. Do not submit package names, package prices, city names, brand names, or car model names as authoritative values.
+
+Send phone_number as a string, never as an integer.
+
+Format visit_date before submission as YYYY-MM-DD.
+
+Format visit_start_time and visit_end_time as HH:mm:ss.
+
+On HTTP 201, treat the submission as successful and use data.id as the new request ID.
+
+On HTTP 422, keep the form open and display the returned field validation errors.
+
+On HTTP 500 or a network failure, keep the entered form values and allow the user to retry.
+
+The mobile application should not attempt to set or update the request status. Status changes are handled by the admin panel.
