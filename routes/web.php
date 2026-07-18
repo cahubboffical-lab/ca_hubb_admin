@@ -20,6 +20,7 @@ use App\Http\Controllers\PackageController;
 use App\Http\Controllers\PlaceController;
 use App\Http\Controllers\ServicePackageController;
 use App\Http\Controllers\ServiceRequestAdminController;
+use App\Http\Controllers\VehicleServiceRequestAdminController;
 use App\Http\Controllers\ReportReasonController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SellerController;
@@ -381,6 +382,15 @@ Route::group(['middleware' => ['auth', 'language']], static function () {
         Route::get('/{auctionSheetVerificationRequest}', [AuctionSheetVerificationAdminController::class, 'show'])->whereNumber('auctionSheetVerificationRequest')->name('auction-sheet-verification.show');
         Route::patch('/{auctionSheetVerificationRequest}/complete', [AuctionSheetVerificationAdminController::class, 'complete'])->whereNumber('auctionSheetVerificationRequest')->name('auction-sheet-verification.complete');
     });
+
+    Route::prefix('vehicle-service-requests/{section}')
+        ->whereIn('section', ['car-registration', 'car-ownership'])
+        ->group(static function () {
+            Route::get('/', [VehicleServiceRequestAdminController::class, 'index'])->name('vehicle-service-requests.index');
+            Route::get('/table', [VehicleServiceRequestAdminController::class, 'table'])->name('vehicle-service-requests.table');
+            Route::get('/requests/{requestId}', [VehicleServiceRequestAdminController::class, 'show'])->whereNumber('requestId')->name('vehicle-service-requests.show');
+            Route::patch('/requests/{requestId}/status', [VehicleServiceRequestAdminController::class, 'updateStatus'])->whereNumber('requestId')->name('vehicle-service-requests.update-status');
+        });
 
     /*** Report Reason Module : START ***/
     Route::group(['prefix' => 'report-reasons'], static function () {

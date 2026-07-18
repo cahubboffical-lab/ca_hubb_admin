@@ -42,6 +42,12 @@ class SystemUpgradeSeeder extends Seeder
             'auction-sheet-verification-request' => [
                 'only' => ['list', 'update']
             ],
+            'car-registration-request' => [
+                'only' => ['list', 'update']
+            ],
+            'car-ownership-request' => [
+                'only' => ['list', 'update']
+            ],
             'payment-transactions'        => [
                 'only' => ['list']
             ],

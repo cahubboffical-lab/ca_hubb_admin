@@ -127,6 +127,10 @@
                     'sell-for-me-package-delete',
                     'auction-sheet-verification-request-list',
                     'auction-sheet-verification-request-update',
+                    'car-registration-request-list',
+                    'car-registration-request-update',
+                    'car-ownership-request-list',
+                    'car-ownership-request-update',
                 ])
                     <div class="sidebar-new-title">{{ __('Service Management') }}</div>
 
@@ -184,6 +188,26 @@
                         <li class="sidebar-item sidebar-submenus">
                             <a href="{{ route('auction-sheet-verification.index') }}" class='sidebar-link'>
                                 <i class="bi bi-file-earmark-check"></i>
+                                <span class="menu-item">{{ __('Requests') }}</span>
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('car-registration-request-list')
+                        <div class="sidebar-new-title mt-2">{{ __('Car Registration') }}</div>
+                        <li class="sidebar-item sidebar-submenus">
+                            <a href="{{ route('vehicle-service-requests.index', ['section' => 'car-registration']) }}" class='sidebar-link'>
+                                <i class="bi bi-card-checklist"></i>
+                                <span class="menu-item">{{ __('Requests') }}</span>
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('car-ownership-request-list')
+                        <div class="sidebar-new-title mt-2">{{ __('Car Ownership Transfer') }}</div>
+                        <li class="sidebar-item sidebar-submenus">
+                            <a href="{{ route('vehicle-service-requests.index', ['section' => 'car-ownership']) }}" class='sidebar-link'>
+                                <i class="bi bi-arrow-left-right"></i>
                                 <span class="menu-item">{{ __('Requests') }}</span>
                             </a>
                         </li>
