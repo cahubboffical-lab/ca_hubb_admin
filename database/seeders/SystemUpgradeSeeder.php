@@ -48,6 +48,7 @@ class SystemUpgradeSeeder extends Seeder
             'car-ownership-request' => [
                 'only' => ['list', 'update']
             ],
+            'fuel-price'                  => '*',
             'payment-transactions'        => [
                 'only' => ['list']
             ],

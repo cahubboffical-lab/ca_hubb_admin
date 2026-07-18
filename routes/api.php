@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CarModelController;
 use App\Http\Controllers\Api\CarInspectionRequestController;
 use App\Http\Controllers\Api\CarOwnershipRequestController;
 use App\Http\Controllers\Api\CarRegistrationRequestController;
+use App\Http\Controllers\Api\FuelPriceController;
 use App\Http\Controllers\Api\AuctionSheetVerificationController;
 use App\Http\Controllers\Api\SellForMeRequestController;
 use Illuminate\Support\Facades\Route;
@@ -83,6 +84,7 @@ Route::post('car-inspection-requests', [CarInspectionRequestController::class, '
 Route::post('sell-for-me-requests', [SellForMeRequestController::class, 'store']);
 Route::post('car-registration-requests', [CarRegistrationRequestController::class, 'store']);
 Route::post('car-ownership-requests', [CarOwnershipRequestController::class, 'store']);
+Route::get('fuel-prices/latest', [FuelPriceController::class, 'latest']);
 Route::get('auction-sheet-verification-price', [AuctionSheetVerificationController::class, 'price']);
 Route::post('auction-sheet-verification-requests', [AuctionSheetVerificationController::class, 'store']);
 Route::get('user-exists', [ApiController::class, 'userExists']);

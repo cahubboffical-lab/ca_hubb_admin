@@ -10,6 +10,7 @@ use App\Http\Controllers\CustomersController;
 use App\Http\Controllers\CustomFieldController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FeatureSectionController;
+use App\Http\Controllers\FuelPriceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstallerController;
 use App\Http\Controllers\ItemController;
@@ -433,6 +434,9 @@ Route::group(['middleware' => ['auth', 'language']], static function () {
     Route::post('car-models/import', [CarModelController::class, 'import'])->name('car-models.import');
     Route::resource('car-models', CarModelController::class);
     /*** Car Model Module : END ***/
+
+    Route::get('fuel-prices/table', [FuelPriceController::class, 'table'])->name('fuel-prices.table');
+    Route::resource('fuel-prices', FuelPriceController::class)->except('show');
 
     Route::resource('faq', FaqController::class);
 

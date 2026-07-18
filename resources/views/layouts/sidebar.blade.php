@@ -214,6 +214,16 @@
                     @endcan
                 @endcanany
 
+                @canany(['fuel-price-list', 'fuel-price-create', 'fuel-price-update', 'fuel-price-delete'])
+                    <div class="sidebar-new-title">{{ __('Fuel Prices') }}</div>
+                    <li class="sidebar-item sidebar-submenus">
+                        <a href="{{ route('fuel-prices.index') }}" class='sidebar-link'>
+                            <i class="bi bi-fuel-pump"></i>
+                            <span class="menu-item">{{ __('Fuel Prices') }}</span>
+                        </a>
+                    </li>
+                @endcanany
+
                 @canany(['seller-verification-field-list', 'seller-verification-field-create',
                     'seller-verification-field-update', 'seller-verification-field-delete',
                     'seller-verification-request-list', 'seller-verification-request-create',
