@@ -23,7 +23,9 @@ class CarFinanceRequest extends Model
     public const DOWN_PAYMENT_OPTIONS = [40, 45, 50, 55, 60, 65, 70];
 
     protected $fillable = [
-        'user_id', 'car_finance_bank_id', 'city_id', 'car_model_id', 'finance_type', 'model_year',
+        'user_id', 'full_name', 'phone_number', 'email', 'cnic', 'income_source', 'monthly_income',
+        'current_bank', 'has_credit_cards_or_loans', 'processing_time', 'car_finance_bank_id', 'city_id',
+        'car_model_id', 'finance_type', 'model_year',
         'car_variant', 'used_car_price', 'vehicle_price', 'price_source', 'tenure_years',
         'down_payment_percent', 'finance_rate', 'insurance_rate', 'processing_fee',
         'down_payment_amount', 'bank_loan', 'first_year_insurance', 'monthly_installment',
@@ -46,7 +48,18 @@ class CarFinanceRequest extends Model
         'total_initial_deposit' => 'integer',
         'completed_at' => 'datetime',
         'canceled_at' => 'datetime',
+        'cnic' => 'encrypted',
+        'has_credit_cards_or_loans' => 'boolean',
     ];
+
+    public function cnicMasked(): ?string
+    {
+        if (empty($this->cnic)) {
+            return null;
+        }
+
+        return substr($this->cnic, 0, 6).'*******-'.substr($this->cnic, -1);
+    }
 
     public static function statuses(): array
     {

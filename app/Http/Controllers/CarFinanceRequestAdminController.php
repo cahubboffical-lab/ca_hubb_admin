@@ -103,10 +103,10 @@ class CarFinanceRequestAdminController extends Controller
         $query->where(function (Builder $builder) use ($like) {
             $builder->where('id', 'LIKE', $like)
                 ->orWhere('finance_type', 'LIKE', $like)
-                ->orWhereHas('user', fn (Builder $relation) => $relation
-                    ->where('name', 'LIKE', $like)
-                    ->orWhere('email', 'LIKE', $like)
-                    ->orWhere('mobile', 'LIKE', $like))
+                ->orWhere('full_name', 'LIKE', $like)
+                ->orWhere('phone_number', 'LIKE', $like)
+                ->orWhere('email', 'LIKE', $like)
+                ->orWhere('current_bank', 'LIKE', $like)
                 ->orWhereHas('bank', fn (Builder $relation) => $relation->where('name', 'LIKE', $like))
                 ->orWhereHas('city', fn (Builder $relation) => $relation->where('name', 'LIKE', $like))
                 ->orWhereHas('carModel', fn (Builder $relation) => $relation
@@ -119,8 +119,10 @@ class CarFinanceRequestAdminController extends Controller
     {
         return [
             'id' => $request->id,
-            'customer' => e($request->user?->name ?? '-'),
+            'customer' => e($request->full_name ?? '-'),
             'phone' => e($this->customerPhone($request)),
+            'email' => e($request->email ?? '-'),
+            'cnic_masked' => e($request->cnicMasked() ?? '-'),
             'bank' => e($request->bank?->name ?? '-'),
             'city' => e($request->city?->translated_name ?? $request->city?->name ?? '-'),
             'car' => e(trim(($request->carModel?->brand_name ?? '').' '.($request->carModel?->name ?? '')) ?: '-'),
@@ -179,8 +181,17 @@ class CarFinanceRequestAdminController extends Controller
                 'id' => $request->user->id,
                 'name' => $request->user->name,
                 'email' => $request->user->email,
-                'phone' => $this->customerPhone($request),
+                'phone' => $this->accountPhone($request),
             ] : null,
+            'full_name' => $request->full_name,
+            'phone_number' => $request->phone_number,
+            'email' => $request->email,
+            'cnic_masked' => $request->cnicMasked(),
+            'income_source' => $request->income_source,
+            'monthly_income' => $request->monthly_income,
+            'current_bank' => $request->current_bank,
+            'has_credit_cards_or_loans' => $request->has_credit_cards_or_loans,
+            'processing_time' => $request->processing_time,
             'bank' => $request->bank ? ['id' => $request->bank->id, 'code' => $request->bank->code, 'name' => $request->bank->name] : null,
             'city' => $request->city?->translated_name ?? $request->city?->name,
             'car' => $request->carModel ? trim(($request->carModel->brand_name ?? '').' '.$request->carModel->name) : null,
@@ -208,6 +219,11 @@ class CarFinanceRequestAdminController extends Controller
     }
 
     private function customerPhone(CarFinanceRequest $request): string
+    {
+        return trim((string) $request->phone_number);
+    }
+
+    private function accountPhone(CarFinanceRequest $request): string
     {
         return trim((string) ($request->user?->country_code ?? '').(string) ($request->user?->mobile ?? ''));
     }

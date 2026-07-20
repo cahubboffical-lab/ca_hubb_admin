@@ -30,6 +30,8 @@
                         <th data-field="id" data-sortable="true">{{ __('ID') }}</th>
                         <th data-field="customer">{{ __('Customer') }}</th>
                         <th data-field="phone">{{ __('Phone') }}</th>
+                        <th data-field="email">{{ __('Email') }}</th>
+                        <th data-field="cnic_masked">{{ __('CNIC') }}</th>
                         <th data-field="bank">{{ __('Bank') }}</th>
                         <th data-field="city">{{ __('City') }}</th>
                         <th data-field="car">{{ __('Car') }}</th>

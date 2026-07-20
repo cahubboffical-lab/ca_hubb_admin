@@ -79,7 +79,13 @@
             const bank = request.bank ? `${request.bank.name} (${request.bank.code})` : '-';
             const fields = [
                 [@json(__('Request ID')), request.id], [@json(__('Status')), request.status_label],
-                [@json(__('Customer')), user], [@json(__('Phone')), request.user?.phone || '-'],
+                [@json(__('Applicant Name')), request.full_name || '-'], [@json(__('Applicant Phone')), request.phone_number || '-'],
+                [@json(__('Applicant Email')), request.email || '-'], [@json(__('CNIC')), request.cnic_masked || '-'],
+                [@json(__('Income Source')), formatValue(request.income_source)], [@json(__('Monthly Income')), formatValue(request.monthly_income)],
+                [@json(__('Current Bank')), request.current_bank || '-'],
+                [@json(__('Credit Cards or Loans')), request.has_credit_cards_or_loans ? @json(__('Yes')) : @json(__('No'))],
+                [@json(__('Processing Time')), formatValue(request.processing_time)],
+                [@json(__('Account')), user], [@json(__('Account Phone')), request.user?.phone || '-'],
                 [@json(__('Bank')), bank], [@json(__('City')), request.city || '-'], [@json(__('Car')), request.car || '-'],
                 [@json(__('Finance Type')), formatValue(request.finance_type)], [@json(__('Model Year')), request.model_year || '-'],
                 [@json(__('Variant')), request.car_variant || '-'], [@json(__('Used Car Price')), money(request.used_car_price)],

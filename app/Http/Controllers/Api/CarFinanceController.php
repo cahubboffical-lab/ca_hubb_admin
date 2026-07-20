@@ -61,9 +61,19 @@ class CarFinanceController extends Controller
         }
 
         $request->merge([
+            'full_name' => $request->filled('full_name') ? trim((string) $request->full_name) : null,
+            'phone_number' => $request->filled('phone_number') ? trim((string) $request->phone_number) : null,
+            'email' => $request->filled('email') ? strtolower(trim((string) $request->email)) : null,
+            'cnic' => $request->filled('cnic') ? trim((string) $request->cnic) : null,
+            'current_bank' => $request->filled('current_bank') ? trim((string) $request->current_bank) : null,
             'car_variant' => $request->filled('car_variant') ? trim((string) $request->car_variant) : null,
         ]);
-        $validator = Validator::make($request->all(), $this->rules());
+        $validator = Validator::make($request->all(), $this->rules(), [
+            'cnic.regex' => __('Please enter CNIC in 12345-1234567-1 format.'),
+            'income_source.in' => __('Please select a valid source of income.'),
+            'has_credit_cards_or_loans.required' => __('Please select whether you have credit cards or loans.'),
+            'has_credit_cards_or_loans.boolean' => __('Please select whether you have credit cards or loans.'),
+        ]);
         if ($validator->fails()) {
             return response()->json([
                 'error' => true,
@@ -110,6 +120,15 @@ class CarFinanceController extends Controller
 
                 $financeRequest = CarFinanceRequest::create(array_merge($calculation, [
                     'user_id' => $user->id,
+                    'full_name' => $validated['full_name'],
+                    'phone_number' => $validated['phone_number'],
+                    'email' => $validated['email'],
+                    'cnic' => $validated['cnic'],
+                    'income_source' => $validated['income_source'],
+                    'monthly_income' => $validated['monthly_income'],
+                    'current_bank' => $validated['current_bank'],
+                    'has_credit_cards_or_loans' => $validated['has_credit_cards_or_loans'],
+                    'processing_time' => $validated['processing_time'],
                     'car_finance_bank_id' => $bank->id,
                     'city_id' => $validated['city_id'],
                     'car_model_id' => $carModel->id,
@@ -149,6 +168,15 @@ class CarFinanceController extends Controller
     private function rules(): array
     {
         return [
+            'full_name' => ['required', 'string', 'max:150'],
+            'phone_number' => ['required', 'string', 'max:30', 'regex:/^\+?[0-9()\-\s]+$/'],
+            'email' => ['required', 'email', 'max:150'],
+            'cnic' => ['required', 'regex:/^\d{5}-\d{7}-\d$/'],
+            'income_source' => ['required', Rule::in(['salaried', 'self_employed'])],
+            'monthly_income' => ['required', Rule::in(['above_80000'])],
+            'current_bank' => ['required', 'string', 'max:150'],
+            'has_credit_cards_or_loans' => ['required', 'boolean'],
+            'processing_time' => ['required', Rule::in(['next_2_weeks', 'next_month', 'just_information'])],
             'finance_type' => ['required', Rule::in([CarFinanceRequest::TYPE_NEW, CarFinanceRequest::TYPE_USED])],
             'city_id' => ['required', 'integer', 'exists:cities,id'],
             'car_model_id' => ['required', 'integer', 'exists:car_models,id'],
@@ -178,6 +206,15 @@ class CarFinanceController extends Controller
     {
         return [
             'id' => $request->id,
+            'full_name' => $request->full_name,
+            'phone_number' => $request->phone_number,
+            'email' => $request->email,
+            'cnic_masked' => $request->cnicMasked(),
+            'income_source' => $request->income_source,
+            'monthly_income' => $request->monthly_income,
+            'current_bank' => $request->current_bank,
+            'has_credit_cards_or_loans' => $request->has_credit_cards_or_loans,
+            'processing_time' => $request->processing_time,
             'finance_type' => $request->finance_type,
             'city_id' => $request->city_id,
             'car_model_id' => $request->car_model_id,

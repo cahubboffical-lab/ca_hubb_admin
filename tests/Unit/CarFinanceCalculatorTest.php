@@ -40,4 +40,5 @@ class CarFinanceCalculatorTest extends TestCase
         $request->status = CarFinanceRequest::STATUS_COMPLETED;
         self::assertFalse($request->canCancel());
     }
+
 }
