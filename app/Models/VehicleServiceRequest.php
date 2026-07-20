@@ -12,6 +12,7 @@ abstract class VehicleServiceRequest extends Model
 
     public const STATUS_PENDING = 'pending';
     public const STATUS_IN_PROGRESS = 'in_progress';
+    public const STATUS_CANCELED = 'canceled';
     public const STATUS_COMPLETED = 'completed';
 
     protected $fillable = [
@@ -39,7 +40,7 @@ abstract class VehicleServiceRequest extends Model
 
     public static function statuses(): array
     {
-        return [self::STATUS_PENDING, self::STATUS_IN_PROGRESS, self::STATUS_COMPLETED];
+        return [self::STATUS_PENDING, self::STATUS_IN_PROGRESS, self::STATUS_CANCELED, self::STATUS_COMPLETED];
     }
 
     public static function normalizePhoneNumber(string $value): string
@@ -54,6 +55,11 @@ abstract class VehicleServiceRequest extends Model
             self::STATUS_IN_PROGRESS => self::STATUS_COMPLETED,
             default => null,
         };
+    }
+
+    public function canCancel(): bool
+    {
+        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_IN_PROGRESS], true);
     }
 
     public function user(): BelongsTo

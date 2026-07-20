@@ -115,8 +115,11 @@ class VehicleServiceRequestAdminController extends Controller
             'status' => ['required', Rule::in(VehicleServiceRequest::statuses())],
         ]);
 
-        $nextStatus = $serviceRequest->nextStatus();
-        if ($nextStatus === null || $validated['status'] !== $nextStatus) {
+        $targetStatus = $validated['status'];
+        $allowed = $targetStatus === VehicleServiceRequest::STATUS_CANCELED
+            ? $serviceRequest->canCancel()
+            : $targetStatus === $serviceRequest->nextStatus();
+        if (! $allowed) {
             return response()->json([
                 'error' => true,
                 'message' => __('This status change is not allowed. Requests must move from Pending to In Process, then to Completed.'),
@@ -124,8 +127,8 @@ class VehicleServiceRequestAdminController extends Controller
         }
 
         $serviceRequest->update([
-            'status' => $nextStatus,
-            'completed_at' => $nextStatus === VehicleServiceRequest::STATUS_COMPLETED ? now() : null,
+            'status' => $targetStatus,
+            'completed_at' => $targetStatus === VehicleServiceRequest::STATUS_COMPLETED ? now() : null,
         ]);
 
         return response()->json([
@@ -212,6 +215,11 @@ class VehicleServiceRequestAdminController extends Controller
                 .'<i class="'.$statusIcon.' me-1"></i>'.e(__('Mark as :status', ['status' => $this->statusLabel($nextStatus)])).'</button>';
         }
 
+        if ($serviceRequest->canCancel()) {
+            $actions .= '<button type="button" class="btn btn-sm btn-outline-danger update-request-status" data-url="'.e($statusUrl).'" data-status="'.e(VehicleServiceRequest::STATUS_CANCELED).'" data-label="'.e(__('Canceled')).'">'
+                .'<i class="fas fa-times-circle me-1"></i>'.e(__('Cancel Request')).'</button>';
+        }
+
         return $actions.'</div>';
     }
 
@@ -219,6 +227,7 @@ class VehicleServiceRequestAdminController extends Controller
     {
         return match ($status) {
             VehicleServiceRequest::STATUS_IN_PROGRESS => __('In Process'),
+            VehicleServiceRequest::STATUS_CANCELED => __('Canceled'),
             VehicleServiceRequest::STATUS_COMPLETED => __('Completed'),
             default => __('Pending'),
         };

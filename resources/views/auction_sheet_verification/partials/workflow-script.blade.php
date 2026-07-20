@@ -89,6 +89,34 @@
             }
         });
 
+        $(document).on('click', '.cancel-auction-request', async function () {
+            const button = this;
+            const result = await Swal.fire({
+                title: @json(__('Cancel this request?')),
+                text: @json(__('This request will move to Canceled and cannot be resumed.')),
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: @json(__('Yes, cancel request')),
+                cancelButtonText: @json(__('Keep Request')),
+                confirmButtonColor: '#dc3545',
+                reverseButtons: true,
+                focusCancel: true,
+            });
+
+            if (!result.isConfirmed) return;
+
+            button.disabled = true;
+            try {
+                const payload = await sendJson(button.dataset.url, 'PATCH', {});
+                await showSuccess(payload.message);
+                table.bootstrapTable('refresh');
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                button.disabled = false;
+            }
+        });
+
         async function sendJson(url, method, body) {
             const response = await fetch(url, {
                 method,

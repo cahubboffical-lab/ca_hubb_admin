@@ -82,15 +82,18 @@ class ServiceRequestAdminController extends Controller
             'status' => ['required', Rule::in(ServiceRequest::statuses())],
         ]);
 
-        $nextStatus = $serviceRequest->nextStatus();
-        if ($nextStatus === null || $validated['status'] !== $nextStatus) {
+        $targetStatus = $validated['status'];
+        $allowed = $targetStatus === ServiceRequest::STATUS_CANCELED
+            ? $serviceRequest->canCancel()
+            : $targetStatus === $serviceRequest->nextStatus();
+        if (! $allowed) {
             return response()->json([
                 'error' => true,
                 'message' => __('This status change is not allowed. Requests must move from Pending to In Process, then to Completed.'),
             ], 422);
         }
 
-        $serviceRequest->update(['status' => $nextStatus]);
+        $serviceRequest->update(['status' => $targetStatus]);
 
         return response()->json([
             'error' => false,
@@ -181,6 +184,12 @@ class ServiceRequestAdminController extends Controller
                 .'<i class="'.$statusIcon.' me-1"></i>'.e(__('Mark as :status', ['status' => $this->statusLabel($nextStatus)])).'</button>';
         }
 
+        if ($serviceRequest->canCancel()) {
+            $actions .= '<button type="button" class="btn btn-sm btn-outline-danger update-request-status"'
+                .' data-url="'.e($statusUrl).'" data-status="'.e(ServiceRequest::STATUS_CANCELED).'" data-label="'.e(__('Canceled')).'">'
+                .'<i class="fas fa-times-circle me-1"></i>'.e(__('Cancel Request')).'</button>';
+        }
+
         return $actions.'</div>';
     }
 
@@ -227,6 +236,7 @@ class ServiceRequestAdminController extends Controller
     {
         return match ($status) {
             ServiceRequest::STATUS_IN_PROGRESS => __('In Process'),
+            ServiceRequest::STATUS_CANCELED => __('Canceled'),
             ServiceRequest::STATUS_COMPLETED => __('Completed'),
             default => __('Pending'),
         };

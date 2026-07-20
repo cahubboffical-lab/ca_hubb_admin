@@ -19,4 +19,9 @@ class AuctionSheetVerificationRequestTest extends TestCase
     {
         self::assertSame('923001234567', AuctionSheetVerificationRequest::normalizePhoneNumber('+92 300-1234567'));
     }
+
+    public function test_canceled_is_a_supported_terminal_queue_status(): void
+    {
+        self::assertContains(AuctionSheetVerificationRequest::STATUS_CANCELED, AuctionSheetVerificationRequest::statuses());
+    }
 }

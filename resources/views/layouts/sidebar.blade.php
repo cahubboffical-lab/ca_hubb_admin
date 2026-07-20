@@ -131,6 +131,12 @@
                     'car-registration-request-update',
                     'car-ownership-request-list',
                     'car-ownership-request-update',
+                    'car-finance-bank-list',
+                    'car-finance-bank-create',
+                    'car-finance-bank-update',
+                    'car-finance-bank-delete',
+                    'car-finance-request-list',
+                    'car-finance-request-update',
                 ])
                     <div class="sidebar-new-title">{{ __('Service Management') }}</div>
 
@@ -212,6 +218,26 @@
                             </a>
                         </li>
                     @endcan
+
+                    @canany(['car-finance-bank-list', 'car-finance-bank-create', 'car-finance-bank-update', 'car-finance-bank-delete', 'car-finance-request-list', 'car-finance-request-update'])
+                        <div class="sidebar-new-title mt-2">{{ __('Car Finance') }}</div>
+                        @canany(['car-finance-bank-list', 'car-finance-bank-create', 'car-finance-bank-update', 'car-finance-bank-delete'])
+                            <li class="sidebar-item sidebar-submenus">
+                                <a href="{{ route('car-finance-banks.index') }}" class='sidebar-link'>
+                                    <i class="bi bi-bank"></i>
+                                    <span class="menu-item">{{ __('Banks') }}</span>
+                                </a>
+                            </li>
+                        @endcanany
+                        @can('car-finance-request-list')
+                            <li class="sidebar-item sidebar-submenus">
+                                <a href="{{ route('car-finance-requests.index') }}" class='sidebar-link'>
+                                    <i class="bi bi-inbox"></i>
+                                    <span class="menu-item">{{ __('Requests') }}</span>
+                                </a>
+                            </li>
+                        @endcan
+                    @endcanany
                 @endcanany
 
                 @canany(['fuel-price-list', 'fuel-price-create', 'fuel-price-update', 'fuel-price-delete'])

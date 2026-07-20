@@ -104,6 +104,28 @@ class AuctionSheetVerificationAdminController extends Controller
         ]);
     }
 
+    public function cancel(AuctionSheetVerificationRequest $auctionSheetVerificationRequest)
+    {
+        ResponseService::noPermissionThenSendJson(self::UPDATE_PERMISSION);
+
+        if ($auctionSheetVerificationRequest->status !== AuctionSheetVerificationRequest::STATUS_PENDING) {
+            return response()->json([
+                'error' => true,
+                'message' => __('Only pending requests can be canceled.'),
+            ], 422);
+        }
+
+        $auctionSheetVerificationRequest->update([
+            'status' => AuctionSheetVerificationRequest::STATUS_CANCELED,
+            'completed_at' => null,
+        ]);
+
+        return response()->json([
+            'error' => false,
+            'message' => __('Auction sheet verification request canceled.'),
+        ]);
+    }
+
     public function updatePrice(Request $request)
     {
         ResponseService::noPermissionThenSendJson(self::UPDATE_PERMISSION);
@@ -159,6 +181,7 @@ class AuctionSheetVerificationAdminController extends Controller
     {
         $showUrl = route('auction-sheet-verification.show', $verificationRequest);
         $completeUrl = route('auction-sheet-verification.complete', $verificationRequest);
+        $cancelUrl = route('auction-sheet-verification.cancel', $verificationRequest);
         $phone = CustomerContactService::phoneUri($verificationRequest->phone_number);
         $whatsAppUrl = CustomerContactService::whatsAppUrl(
             $verificationRequest->phone_number,
@@ -178,6 +201,8 @@ class AuctionSheetVerificationAdminController extends Controller
         if ($verificationRequest->status === AuctionSheetVerificationRequest::STATUS_PENDING && Auth::user()->can(self::UPDATE_PERMISSION)) {
             $actions .= '<button type="button" class="btn btn-sm btn-primary complete-auction-request" data-url="'.e($completeUrl).'">'
                 .'<i class="fas fa-check-circle me-1"></i>'.e(__('Mark as Completed')).'</button>';
+            $actions .= '<button type="button" class="btn btn-sm btn-outline-danger cancel-auction-request" data-url="'.e($cancelUrl).'">'
+                .'<i class="fas fa-times-circle me-1"></i>'.e(__('Cancel Request')).'</button>';
         }
 
         return $actions.'</div>';
@@ -185,6 +210,10 @@ class AuctionSheetVerificationAdminController extends Controller
 
     private function statusLabel(string $status): string
     {
-        return $status === AuctionSheetVerificationRequest::STATUS_COMPLETED ? __('Completed') : __('Pending');
+        return match ($status) {
+            AuctionSheetVerificationRequest::STATUS_CANCELED => __('Canceled'),
+            AuctionSheetVerificationRequest::STATUS_COMPLETED => __('Completed'),
+            default => __('Pending'),
+        };
     }
 }

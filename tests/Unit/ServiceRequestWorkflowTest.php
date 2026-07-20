@@ -20,6 +20,11 @@ class ServiceRequestWorkflowTest extends TestCase
 
             $serviceRequest->status = ServiceRequest::STATUS_COMPLETED;
             self::assertNull($serviceRequest->nextStatus());
+
+            $serviceRequest->status = ServiceRequest::STATUS_PENDING;
+            self::assertTrue($serviceRequest->canCancel());
+            $serviceRequest->status = ServiceRequest::STATUS_CANCELED;
+            self::assertFalse($serviceRequest->canCancel());
         }
     }
 }

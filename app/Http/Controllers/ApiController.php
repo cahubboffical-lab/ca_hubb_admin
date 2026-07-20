@@ -3125,28 +3125,58 @@ class ApiController extends Controller
             $validator = Validator::make($request->all(), [
                 'news_id' => 'nullable|integer|exists:news,id',
                 'city_id' => 'nullable|integer|exists:cities,id',
+                'page' => 'nullable|integer|min:1',
             ]);
 
             if ($validator->fails()) {
-                ResponseService::validationError($validator->errors()->first());
+                return response()->json([
+                    'error' => true,
+                    'message' => $validator->errors()->first(),
+                    'data' => null,
+                    'code' => config('constants.RESPONSE_CODE.VALIDATION_ERROR'),
+                    'details' => '',
+                ]);
             }
 
             $query = News::with(['city:id,name,state_id,country_id']);
 
             if (! empty($request->news_id)) {
                 $news = $query->where('id', $request->news_id)->first();
-                ResponseService::successResponse(__('News fetched successfully'), $news);
+
+                return response()->json([
+                    'error' => false,
+                    'message' => __('News fetched successfully'),
+                    'data' => $news,
+                    'code' => config('constants.RESPONSE_CODE.SUCCESS'),
+                ]);
             }
 
             if (! empty($request->city_id)) {
                 $query->where('city_id', $request->city_id);
             }
 
-            $news = $query->orderByDesc('created_at')->get();
-            ResponseService::successResponse(__('News fetched successfully'), $news);
+            $news = $query
+                ->orderByDesc('created_at')
+                ->orderByDesc('id')
+                ->paginate(10)
+                ->withQueryString();
+
+            return response()->json([
+                'error' => false,
+                'message' => __('News fetched successfully'),
+                'data' => $news,
+                'code' => config('constants.RESPONSE_CODE.SUCCESS'),
+            ]);
         } catch (Throwable $th) {
-            ResponseService::logErrorResponse($th, 'API Controller -> getNews');
-            ResponseService::errorResponse(__('Failed to fetch news'));
+            report($th);
+
+            return response()->json([
+                'error' => true,
+                'message' => __('Failed to fetch news'),
+                'data' => null,
+                'code' => config('constants.RESPONSE_CODE.EXCEPTION_ERROR'),
+                'details' => '',
+            ], 500);
         }
     }
 

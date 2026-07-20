@@ -25,6 +25,11 @@ class VehicleServiceRequestTest extends TestCase
 
             $request->status = VehicleServiceRequest::STATUS_COMPLETED;
             $this->assertNull($request->nextStatus());
+
+            $request->status = VehicleServiceRequest::STATUS_PENDING;
+            $this->assertTrue($request->canCancel());
+            $request->status = VehicleServiceRequest::STATUS_CANCELED;
+            $this->assertFalse($request->canCancel());
         }
     }
 }

@@ -20,7 +20,7 @@
 
         #auction-verification-table td:last-child,
         #auction-verification-table th:last-child {
-            min-width: 485px;
+            min-width: 600px;
             text-align: center;
         }
 
@@ -72,6 +72,9 @@
                 <ul class="nav nav-pills request-status-toolbar" id="auction-status-tabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" type="button" data-status="pending">{{ __('Pending') }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" type="button" data-status="canceled">{{ __('Canceled') }}</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" type="button" data-status="completed">{{ __('Completed') }}</button>

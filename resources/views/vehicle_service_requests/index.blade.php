@@ -10,7 +10,7 @@
 
         #vehicle-service-request-table td:last-child,
         #vehicle-service-request-table th:last-child {
-            min-width: 485px;
+            min-width: 600px;
             text-align: center;
         }
 
@@ -43,6 +43,9 @@
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" type="button" data-status="in_progress">{{ __('In Process') }}</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" type="button" data-status="canceled">{{ __('Canceled') }}</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" type="button" data-status="completed">{{ __('Completed') }}</button>

@@ -11,6 +11,7 @@ class AuctionSheetVerificationRequest extends Model
     use HasFactory;
 
     public const STATUS_PENDING = 'pending';
+    public const STATUS_CANCELED = 'canceled';
     public const STATUS_COMPLETED = 'completed';
 
     public const NOTIFICATION_PENDING = 'pending';
@@ -40,7 +41,7 @@ class AuctionSheetVerificationRequest extends Model
 
     public static function statuses(): array
     {
-        return [self::STATUS_PENDING, self::STATUS_COMPLETED];
+        return [self::STATUS_PENDING, self::STATUS_CANCELED, self::STATUS_COMPLETED];
     }
 
     public static function normalizeChassisNumber(string $value): string

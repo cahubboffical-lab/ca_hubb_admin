@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Api\CarFinanceController;
 use App\Http\Controllers\Api\CarModelController;
 use App\Http\Controllers\Api\CarInspectionRequestController;
 use App\Http\Controllers\Api\CarOwnershipRequestController;
@@ -84,6 +85,8 @@ Route::post('car-inspection-requests', [CarInspectionRequestController::class, '
 Route::post('sell-for-me-requests', [SellForMeRequestController::class, 'store']);
 Route::post('car-registration-requests', [CarRegistrationRequestController::class, 'store']);
 Route::post('car-ownership-requests', [CarOwnershipRequestController::class, 'store']);
+Route::get('car-finance-banks', [CarFinanceController::class, 'banks']);
+Route::post('car-finance-requests', [CarFinanceController::class, 'store']);
 Route::get('fuel-prices/latest', [FuelPriceController::class, 'latest']);
 Route::get('auction-sheet-verification-price', [AuctionSheetVerificationController::class, 'price']);
 Route::post('auction-sheet-verification-requests', [AuctionSheetVerificationController::class, 'store']);

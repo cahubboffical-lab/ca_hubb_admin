@@ -43,16 +43,19 @@
             const button = this;
             const statusLabel = button.dataset.label;
             const isCompleted = button.dataset.status === 'completed';
+            const isCanceled = button.dataset.status === 'canceled';
             const result = await Swal.fire({
-                title: `${@json(__('Mark as'))} ${statusLabel}?`,
-                text: isCompleted
-                    ? @json(__('This request will be marked as completed. This action cannot be reversed.'))
-                    : @json(__('This confirms that the customer has been contacted and moves the request to In Process.')),
-                icon: isCompleted ? 'success' : 'question',
+                title: isCanceled ? @json(__('Cancel this request?')) : `${@json(__('Mark as'))} ${statusLabel}?`,
+                text: isCanceled
+                    ? @json(__('This request will move to Canceled and cannot be resumed.'))
+                    : (isCompleted
+                        ? @json(__('This request will be marked as completed. This action cannot be reversed.'))
+                        : @json(__('This confirms that the customer has been contacted and moves the request to In Process.'))),
+                icon: isCanceled ? 'warning' : (isCompleted ? 'success' : 'question'),
                 showCancelButton: true,
-                confirmButtonText: `${@json(__('Yes, mark as'))} ${statusLabel}`,
-                cancelButtonText: @json(__('Cancel')),
-                confirmButtonColor: isCompleted ? '#198754' : '#435ebe',
+                confirmButtonText: isCanceled ? @json(__('Yes, cancel request')) : `${@json(__('Yes, mark as'))} ${statusLabel}`,
+                cancelButtonText: @json(__('Keep Request')),
+                confirmButtonColor: isCanceled ? '#dc3545' : (isCompleted ? '#198754' : '#435ebe'),
                 cancelButtonColor: '#6c757d',
                 reverseButtons: true,
                 focusCancel: true,

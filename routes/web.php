@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\AuctionSheetVerificationAdminController;
+use App\Http\Controllers\CarFinanceBankController;
+use App\Http\Controllers\CarFinanceRequestAdminController;
 use App\Http\Controllers\CarModelController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Controller;
@@ -382,6 +384,7 @@ Route::group(['middleware' => ['auth', 'language']], static function () {
         Route::put('/price', [AuctionSheetVerificationAdminController::class, 'updatePrice'])->name('auction-sheet-verification.price.update');
         Route::get('/{auctionSheetVerificationRequest}', [AuctionSheetVerificationAdminController::class, 'show'])->whereNumber('auctionSheetVerificationRequest')->name('auction-sheet-verification.show');
         Route::patch('/{auctionSheetVerificationRequest}/complete', [AuctionSheetVerificationAdminController::class, 'complete'])->whereNumber('auctionSheetVerificationRequest')->name('auction-sheet-verification.complete');
+        Route::patch('/{auctionSheetVerificationRequest}/cancel', [AuctionSheetVerificationAdminController::class, 'cancel'])->whereNumber('auctionSheetVerificationRequest')->name('auction-sheet-verification.cancel');
     });
 
     Route::prefix('vehicle-service-requests/{section}')
@@ -392,6 +395,21 @@ Route::group(['middleware' => ['auth', 'language']], static function () {
             Route::get('/requests/{requestId}', [VehicleServiceRequestAdminController::class, 'show'])->whereNumber('requestId')->name('vehicle-service-requests.show');
             Route::patch('/requests/{requestId}/status', [VehicleServiceRequestAdminController::class, 'updateStatus'])->whereNumber('requestId')->name('vehicle-service-requests.update-status');
         });
+
+    Route::prefix('car-finance')->group(static function () {
+        Route::get('/banks', [CarFinanceBankController::class, 'index'])->name('car-finance-banks.index');
+        Route::get('/banks/table', [CarFinanceBankController::class, 'table'])->name('car-finance-banks.table');
+        Route::get('/banks/create', [CarFinanceBankController::class, 'create'])->name('car-finance-banks.create');
+        Route::post('/banks', [CarFinanceBankController::class, 'store'])->name('car-finance-banks.store');
+        Route::get('/banks/{carFinanceBank}/edit', [CarFinanceBankController::class, 'edit'])->whereNumber('carFinanceBank')->name('car-finance-banks.edit');
+        Route::put('/banks/{carFinanceBank}', [CarFinanceBankController::class, 'update'])->whereNumber('carFinanceBank')->name('car-finance-banks.update');
+        Route::delete('/banks/{carFinanceBank}', [CarFinanceBankController::class, 'destroy'])->whereNumber('carFinanceBank')->name('car-finance-banks.destroy');
+
+        Route::get('/requests', [CarFinanceRequestAdminController::class, 'index'])->name('car-finance-requests.index');
+        Route::get('/requests/table', [CarFinanceRequestAdminController::class, 'table'])->name('car-finance-requests.table');
+        Route::get('/requests/{carFinanceRequest}', [CarFinanceRequestAdminController::class, 'show'])->whereNumber('carFinanceRequest')->name('car-finance-requests.show');
+        Route::patch('/requests/{carFinanceRequest}/status', [CarFinanceRequestAdminController::class, 'updateStatus'])->whereNumber('carFinanceRequest')->name('car-finance-requests.update-status');
+    });
 
     /*** Report Reason Module : START ***/
     Route::group(['prefix' => 'report-reasons'], static function () {
