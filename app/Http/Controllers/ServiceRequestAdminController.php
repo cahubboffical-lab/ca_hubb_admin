@@ -78,8 +78,10 @@ class ServiceRequestAdminController extends Controller
         ResponseService::noPermissionThenSendJson($config['permission']);
         $serviceRequest = $this->findRequest($config['model'], $requestId);
 
+        $request->merge(['admin_notes' => trim((string) $request->input('admin_notes'))]);
         $validated = $request->validate([
             'status' => ['required', Rule::in(ServiceRequest::statuses())],
+            'admin_notes' => ['required', 'string', 'max:2000'],
         ]);
 
         $targetStatus = $validated['status'];
@@ -93,7 +95,10 @@ class ServiceRequestAdminController extends Controller
             ], 422);
         }
 
-        $serviceRequest->update(['status' => $targetStatus]);
+        $serviceRequest->update([
+            'status' => $targetStatus,
+            'admin_notes' => $validated['admin_notes'],
+        ]);
 
         return response()->json([
             'error' => false,
@@ -195,7 +200,7 @@ class ServiceRequestAdminController extends Controller
 
     private function detailData(ServiceRequest $serviceRequest): array
     {
-        return [
+        $data = [
             'id' => $serviceRequest->id,
             'full_name' => $serviceRequest->full_name,
             'phone_number' => $serviceRequest->phone_number,
@@ -220,16 +225,22 @@ class ServiceRequestAdminController extends Controller
             'model_year' => $serviceRequest->model_year,
             'car_variant' => $serviceRequest->car_variant,
             'car_condition' => $serviceRequest->car_condition,
-            'registration_area' => $serviceRequest->registration_area,
             'visit_area' => $serviceRequest->visit_area,
             'visit_date' => $serviceRequest->visit_date?->format('Y-m-d'),
             'visit_start_time' => $serviceRequest->visit_start_time,
             'visit_end_time' => $serviceRequest->visit_end_time,
             'status' => $serviceRequest->status,
             'status_label' => $this->statusLabel($serviceRequest->status),
+            'admin_notes' => $serviceRequest->admin_notes,
             'created_at' => $serviceRequest->created_at?->format('Y-m-d H:i'),
             'updated_at' => $serviceRequest->updated_at?->format('Y-m-d H:i'),
         ];
+
+        if ($serviceRequest instanceof SellForMeRequest) {
+            $data['registration_area'] = $serviceRequest->registration_area;
+        }
+
+        return $data;
     }
 
     private function statusLabel(string $status): string

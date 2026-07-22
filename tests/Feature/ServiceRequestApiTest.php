@@ -2,10 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Models\CarModel;
+use App\Models\City;
+use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class ServiceRequestApiTest extends TestCase
 {
+    use DatabaseTransactions;
+
     /**
      * @dataProvider serviceRequestEndpoints
      */
@@ -50,5 +56,27 @@ class ServiceRequestApiTest extends TestCase
         $response = $this->postJson($endpoint, []);
 
         $response->assertJsonMissingValidationErrors('service_package_id');
+    }
+
+    public function test_car_inspection_does_not_accept_or_return_registration_area(): void
+    {
+        $response = $this->postJson('/api/car-inspection-requests', [
+            'full_name' => 'Inspection Customer',
+            'phone_number' => '+923001234567',
+            'city_id' => City::query()->value('id'),
+            'car_model_id' => CarModel::query()->value('id'),
+            'model_year' => 2022,
+            'car_variant' => 'GLX',
+            'car_condition' => 'used',
+            'registration_area' => 'Punjab',
+            'visit_area' => 'Gulberg',
+            'visit_date' => Carbon::now('Asia/Karachi')->addDay()->format('Y-m-d'),
+            'visit_start_time' => '10:00:00',
+            'visit_end_time' => '11:00:00',
+        ]);
+
+        $response
+            ->assertCreated()
+            ->assertJsonMissingPath('data.registration_area');
     }
 }

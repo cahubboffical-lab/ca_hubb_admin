@@ -66,8 +66,10 @@ class CarFinanceRequestAdminController extends Controller
     public function updateStatus(Request $request, CarFinanceRequest $carFinanceRequest)
     {
         ResponseService::noPermissionThenSendJson('car-finance-request-update');
+        $request->merge(['admin_notes' => trim((string) $request->input('admin_notes'))]);
         $validated = $request->validate([
             'status' => ['required', Rule::in(CarFinanceRequest::statuses())],
+            'admin_notes' => ['required', 'string', 'max:2000'],
         ]);
         $targetStatus = $validated['status'];
         $allowed = $targetStatus === CarFinanceRequest::STATUS_CANCELED
@@ -83,6 +85,7 @@ class CarFinanceRequestAdminController extends Controller
 
         $carFinanceRequest->update([
             'status' => $targetStatus,
+            'admin_notes' => $validated['admin_notes'],
             'completed_at' => $targetStatus === CarFinanceRequest::STATUS_COMPLETED ? now() : null,
             'canceled_at' => $targetStatus === CarFinanceRequest::STATUS_CANCELED ? now() : null,
         ]);

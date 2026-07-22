@@ -93,7 +93,6 @@ class AuctionSheetVerificationController extends Controller
             'phone_number' => $verificationRequest->phone_number,
             'status' => $verificationRequest->status,
             'notification_status' => $verificationRequest->notification_status,
-            'report_url' => $verificationRequest->report_url,
             'price_amount' => $verificationRequest->price_amount,
             'currency_code' => $verificationRequest->currency_code,
             'created_at' => $verificationRequest->created_at?->toIso8601String(),

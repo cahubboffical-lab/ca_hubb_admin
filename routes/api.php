@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CarRegistrationRequestController;
 use App\Http\Controllers\Api\FuelPriceController;
 use App\Http\Controllers\Api\AuctionSheetVerificationController;
 use App\Http\Controllers\Api\SellForMeRequestController;
+use App\Http\Controllers\Api\StartupAdController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -88,6 +89,7 @@ Route::post('car-ownership-requests', [CarOwnershipRequestController::class, 'st
 Route::get('car-finance-banks', [CarFinanceController::class, 'banks']);
 Route::post('car-finance-requests', [CarFinanceController::class, 'store']);
 Route::get('fuel-prices/latest', [FuelPriceController::class, 'latest']);
+Route::get('startup-ads', [StartupAdController::class, 'random']);
 Route::get('auction-sheet-verification-price', [AuctionSheetVerificationController::class, 'price']);
 Route::post('auction-sheet-verification-requests', [AuctionSheetVerificationController::class, 'store']);
 Route::get('user-exists', [ApiController::class, 'userExists']);

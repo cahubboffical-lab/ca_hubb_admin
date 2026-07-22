@@ -1,0 +1,88 @@
+STARTUP AND SERVICE ADS MOBILE API
+
+Purpose
+This API returns one random active image ad. It can return either a general startup ad or an ad for a specific service such as car inspection.
+
+Endpoint
+GET /api/startup-ads
+
+Authentication
+Not required.
+
+Pagination
+Not supported and not needed. Every request returns a maximum of one randomly selected active ad.
+
+Query parameter
+type
+Optional string.
+
+Do not send type, send an empty type, or send type=null to request a general startup ad. General startup ads have a null type in the database.
+
+Send type=inspection to request a car inspection ad.
+
+General startup ad request
+GET /api/startup-ads
+
+Inspection ad request
+GET /api/startup-ads?type=inspection
+
+Successful response when an active ad exists
+HTTP status: 200
+
+{
+  "error": false,
+  "message": "Ad fetched successfully.",
+  "data": {
+    "id": 12,
+    "name": "Inspection Campaign",
+    "image": "https://admin.example.com/storage/startup-ads/inspection-campaign.webp",
+    "url": "https://example.com/car-inspection",
+    "type": "inspection",
+    "is_active": true,
+    "created_at": "2026-07-22T14:30:00+05:00"
+  }
+}
+
+Response when no active ad matches
+HTTP status: 200
+
+{
+  "error": false,
+  "message": "No active ad is available.",
+  "data": null
+}
+
+Field details
+id
+Integer ad identifier.
+
+name
+Optional string. It can be null.
+
+image
+Required absolute image URL. Display this image in the mobile application.
+
+url
+Optional HTTP or HTTPS destination URL. It can be null. Only make the ad clickable when this value is not null or empty.
+
+type
+The ad category. It is null for general startup ads and "inspection" for car inspection ads.
+
+is_active
+Always true for an ad returned by this API. Inactive ads are never returned.
+
+created_at
+ISO 8601 creation date and time.
+
+Mobile implementation flow
+For the app startup placement, call GET /api/startup-ads without a type.
+
+For the car inspection placement, call GET /api/startup-ads?type=inspection.
+
+If data is null, continue normally without showing an ad.
+
+If data is available, load the image URL. If url is also available, open it when the user taps the ad. Use an external browser or the application's approved in-app browser behavior.
+
+Do not cache an ad indefinitely. The server randomly selects from the currently active ads on each request, so request it again when the relevant screen or placement needs a new ad.
+
+Only HTTP and HTTPS URLs are accepted for an ad destination in the admin panel.

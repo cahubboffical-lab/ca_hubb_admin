@@ -111,8 +111,10 @@ class VehicleServiceRequestAdminController extends Controller
         $config = $this->sectionConfig($section);
         ResponseService::noPermissionThenSendJson($config['update_permission']);
         $serviceRequest = $this->findRequest($config['model'], $requestId);
+        $request->merge(['admin_notes' => trim((string) $request->input('admin_notes'))]);
         $validated = $request->validate([
             'status' => ['required', Rule::in(VehicleServiceRequest::statuses())],
+            'admin_notes' => ['required', 'string', 'max:2000'],
         ]);
 
         $targetStatus = $validated['status'];
@@ -128,6 +130,7 @@ class VehicleServiceRequestAdminController extends Controller
 
         $serviceRequest->update([
             'status' => $targetStatus,
+            'admin_notes' => $validated['admin_notes'],
             'completed_at' => $targetStatus === VehicleServiceRequest::STATUS_COMPLETED ? now() : null,
         ]);
 

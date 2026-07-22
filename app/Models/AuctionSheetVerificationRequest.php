@@ -24,7 +24,6 @@ class AuctionSheetVerificationRequest extends Model
         'phone_number',
         'phone_number_normalized',
         'status',
-        'report_url',
         'admin_notes',
         'notification_status',
         'notified_at',

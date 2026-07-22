@@ -1,5 +1,6 @@
 <script>
     @include('shared._request-table-toolbar-script')
+    @include('shared._request-admin-notes-dialog-script')
 
     let activeFinanceRequestStatus = 'pending';
 
@@ -39,7 +40,7 @@
             const button = this;
             const isCanceled = button.dataset.status === 'canceled';
             const isCompleted = button.dataset.status === 'completed';
-            const result = await Swal.fire({
+            const result = await confirmRequestStatusWithNotes({
                 title: isCanceled ? @json(__('Cancel this request?')) : `${@json(__('Mark as'))} ${button.dataset.label}?`,
                 text: isCanceled
                     ? @json(__('The request will move to Canceled and cannot be resumed.'))
@@ -47,12 +48,9 @@
                         ? @json(__('The request will move to Completed and cannot be changed again.'))
                         : @json(__('This confirms that the customer has been contacted and moves the request to In Process.'))),
                 icon: isCanceled ? 'warning' : 'question',
-                showCancelButton: true,
                 confirmButtonText: isCanceled ? @json(__('Yes, cancel request')) : `${@json(__('Yes, mark as'))} ${button.dataset.label}`,
                 cancelButtonText: @json(__('Keep Request')),
                 confirmButtonColor: isCanceled ? '#dc3545' : (isCompleted ? '#198754' : '#435ebe'),
-                reverseButtons: true,
-                focusCancel: true,
             });
             if (!result.isConfirmed) return;
 
@@ -61,7 +59,7 @@
                 const response = await fetch(button.dataset.url, {
                     method: 'PATCH',
                     headers: {'Accept': 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken},
-                    body: JSON.stringify({status: button.dataset.status}),
+                    body: JSON.stringify({status: button.dataset.status, admin_notes: result.value.trim()}),
                 });
                 const payload = await response.json();
                 if (!response.ok || payload.error) throw new Error(payload.message || @json(__('Unable to update request status.')));

@@ -1,5 +1,6 @@
 <script>
     @include('shared._request-table-toolbar-script')
+    @include('shared._request-admin-notes-dialog-script')
 
     let activeVehicleRequestStatus = 'pending';
 
@@ -44,7 +45,7 @@
             const statusLabel = button.dataset.label;
             const isCompleted = button.dataset.status === 'completed';
             const isCanceled = button.dataset.status === 'canceled';
-            const result = await Swal.fire({
+            const result = await confirmRequestStatusWithNotes({
                 title: isCanceled ? @json(__('Cancel this request?')) : `${@json(__('Mark as'))} ${statusLabel}?`,
                 text: isCanceled
                     ? @json(__('This request will move to Canceled and cannot be resumed.'))
@@ -52,13 +53,9 @@
                         ? @json(__('This request will be marked as completed. This action cannot be reversed.'))
                         : @json(__('This confirms that the customer has been contacted and moves the request to In Process.'))),
                 icon: isCanceled ? 'warning' : (isCompleted ? 'success' : 'question'),
-                showCancelButton: true,
                 confirmButtonText: isCanceled ? @json(__('Yes, cancel request')) : `${@json(__('Yes, mark as'))} ${statusLabel}`,
                 cancelButtonText: @json(__('Keep Request')),
                 confirmButtonColor: isCanceled ? '#dc3545' : (isCompleted ? '#198754' : '#435ebe'),
-                cancelButtonColor: '#6c757d',
-                reverseButtons: true,
-                focusCancel: true,
             });
 
             if (!result.isConfirmed) {
@@ -74,7 +71,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken,
                     },
-                    body: JSON.stringify({status: button.dataset.status}),
+                    body: JSON.stringify({status: button.dataset.status, admin_notes: result.value.trim()}),
                 });
                 const payload = await response.json();
                 if (!response.ok || payload.error) {

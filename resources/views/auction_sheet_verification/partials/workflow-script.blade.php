@@ -1,5 +1,6 @@
 <script>
     @include('shared._request-table-toolbar-script')
+    @include('shared._request-admin-notes-dialog-script')
 
     let activeAuctionVerificationStatus = 'pending';
 
@@ -25,7 +26,7 @@
         $('#auction-price-form').on('submit', async function (event) {
             event.preventDefault();
             const amount = document.getElementById('auction-price-amount').value;
-            const result = await Swal.fire({
+            const result = await confirmRequestStatusWithNotes({
                 title: @json(__('Update verification price?')),
                 text: `${@json(__('The mobile application will receive the new price:'))} PKR ${amount}`,
                 icon: 'question',
@@ -68,18 +69,16 @@
                 title: @json(__('Mark as Completed?')),
                 text: @json(__('This request will move to Completed and cannot be moved back to Pending.')),
                 icon: 'question',
-                showCancelButton: true,
                 confirmButtonText: @json(__('Yes, mark as Completed')),
                 cancelButtonText: @json(__('Cancel')),
                 confirmButtonColor: '#198754',
-                reverseButtons: true,
             });
 
             if (!result.isConfirmed) return;
 
             button.disabled = true;
             try {
-                const payload = await sendJson(button.dataset.url, 'PATCH', {});
+                const payload = await sendJson(button.dataset.url, 'PATCH', {admin_notes: result.value.trim()});
                 await showSuccess(payload.message);
                 table.bootstrapTable('refresh');
             } catch (error) {
@@ -91,23 +90,20 @@
 
         $(document).on('click', '.cancel-auction-request', async function () {
             const button = this;
-            const result = await Swal.fire({
+            const result = await confirmRequestStatusWithNotes({
                 title: @json(__('Cancel this request?')),
                 text: @json(__('This request will move to Canceled and cannot be resumed.')),
                 icon: 'warning',
-                showCancelButton: true,
                 confirmButtonText: @json(__('Yes, cancel request')),
                 cancelButtonText: @json(__('Keep Request')),
                 confirmButtonColor: '#dc3545',
-                reverseButtons: true,
-                focusCancel: true,
             });
 
             if (!result.isConfirmed) return;
 
             button.disabled = true;
             try {
-                const payload = await sendJson(button.dataset.url, 'PATCH', {});
+                const payload = await sendJson(button.dataset.url, 'PATCH', {admin_notes: result.value.trim()});
                 await showSuccess(payload.message);
                 table.bootstrapTable('refresh');
             } catch (error) {
@@ -147,7 +143,6 @@
                 [@json(__('Account')), account],
                 [@json(__('Price')), `${request.currency_code || 'PKR'} ${request.price_amount || '-'}`],
                 [@json(__('Notification')), formatValue(request.notification_status)],
-                [@json(__('Report URL')), request.report_url || '-'],
                 [@json(__('Admin Notes')), request.admin_notes || '-'],
                 [@json(__('Notified At')), request.notified_at || '-'],
                 [@json(__('Submitted At')), request.created_at],

@@ -43,7 +43,8 @@
                 @endcanany
 
                 @canany(['item-list', 'item-create', 'item-update', 'item-delete', 'tip-list', 'tip-create',
-                    'tip-update', 'tip-delete'])
+                    'tip-update', 'tip-delete', 'startup-ad-list', 'startup-ad-create', 'startup-ad-update',
+                    'startup-ad-delete'])
 
                     <div class="sidebar-new-title">{{ __('Advertisement Management') }}</div>
                     @canany(['item-list', 'item-create', 'item-update', 'item-delete'])
@@ -51,6 +52,15 @@
                             <a href="{{ route('advertisement.index') }}" class='sidebar-link'>
                                 <i class="bi bi-ui-radios-grid"></i>
                                 <span class="menu-item">{{ __('Advertisement') }}</span>
+                            </a>
+                        </li>
+                    @endcanany
+
+                    @canany(['startup-ad-list', 'startup-ad-create', 'startup-ad-update', 'startup-ad-delete'])
+                        <li class="sidebar-item sidebar-submenus">
+                            <a href="{{ route('startup-ads.index', ['section' => 'startup']) }}" class='sidebar-link'>
+                                <i class="bi bi-image"></i>
+                                <span class="menu-item">{{ __('Startup Ads') }}</span>
                             </a>
                         </li>
                     @endcanany
@@ -120,6 +130,10 @@
                     'car-inspection-package-create',
                     'car-inspection-package-update',
                     'car-inspection-package-delete',
+                    'inspection-ad-list',
+                    'inspection-ad-create',
+                    'inspection-ad-update',
+                    'inspection-ad-delete',
                     'sell-for-me-request-list',
                     'sell-for-me-package-list',
                     'sell-for-me-package-create',
@@ -149,7 +163,7 @@
                         </li>
                     @endcanany
 
-                    @canany(['car-inspection-request-list', 'car-inspection-package-list', 'car-inspection-package-create', 'car-inspection-package-update', 'car-inspection-package-delete'])
+                    @canany(['car-inspection-request-list', 'car-inspection-package-list', 'car-inspection-package-create', 'car-inspection-package-update', 'car-inspection-package-delete', 'inspection-ad-list', 'inspection-ad-create', 'inspection-ad-update', 'inspection-ad-delete'])
                         <div class="sidebar-new-title mt-2">{{ __('Car Inspection') }}</div>
                         @can('car-inspection-request-list')
                             <li class="sidebar-item sidebar-submenus">
@@ -164,6 +178,14 @@
                                 <a href="{{ route('service-packages.packages.index', ['section' => 'car-inspection']) }}" class='sidebar-link'>
                                     <i class="bi bi-box-seam"></i>
                                     <span class="menu-item">{{ __('Packages') }}</span>
+                                </a>
+                            </li>
+                        @endcanany
+                        @canany(['inspection-ad-list', 'inspection-ad-create', 'inspection-ad-update', 'inspection-ad-delete'])
+                            <li class="sidebar-item sidebar-submenus">
+                                <a href="{{ route('startup-ads.index', ['section' => 'inspection']) }}" class='sidebar-link'>
+                                    <i class="bi bi-image"></i>
+                                    <span class="menu-item">{{ __('Ads') }}</span>
                                 </a>
                             </li>
                         @endcanany

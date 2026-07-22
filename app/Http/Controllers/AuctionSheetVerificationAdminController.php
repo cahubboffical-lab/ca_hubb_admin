@@ -65,7 +65,6 @@ class AuctionSheetVerificationAdminController extends Controller
                 'status' => $auctionSheetVerificationRequest->status,
                 'status_label' => $this->statusLabel($auctionSheetVerificationRequest->status),
                 'notification_status' => $auctionSheetVerificationRequest->notification_status,
-                'report_url' => $auctionSheetVerificationRequest->report_url,
                 'admin_notes' => $auctionSheetVerificationRequest->admin_notes,
                 'price_amount' => $auctionSheetVerificationRequest->price_amount,
                 'currency_code' => $auctionSheetVerificationRequest->currency_code,
@@ -82,9 +81,13 @@ class AuctionSheetVerificationAdminController extends Controller
         ]);
     }
 
-    public function complete(AuctionSheetVerificationRequest $auctionSheetVerificationRequest)
+    public function complete(Request $request, AuctionSheetVerificationRequest $auctionSheetVerificationRequest)
     {
         ResponseService::noPermissionThenSendJson(self::UPDATE_PERMISSION);
+        $request->merge(['admin_notes' => trim((string) $request->input('admin_notes'))]);
+        $validated = $request->validate([
+            'admin_notes' => ['required', 'string', 'max:2000'],
+        ]);
 
         if ($auctionSheetVerificationRequest->status !== AuctionSheetVerificationRequest::STATUS_PENDING) {
             return response()->json([
@@ -95,6 +98,7 @@ class AuctionSheetVerificationAdminController extends Controller
 
         $auctionSheetVerificationRequest->update([
             'status' => AuctionSheetVerificationRequest::STATUS_COMPLETED,
+            'admin_notes' => $validated['admin_notes'],
             'completed_at' => now(),
         ]);
 
@@ -104,9 +108,13 @@ class AuctionSheetVerificationAdminController extends Controller
         ]);
     }
 
-    public function cancel(AuctionSheetVerificationRequest $auctionSheetVerificationRequest)
+    public function cancel(Request $request, AuctionSheetVerificationRequest $auctionSheetVerificationRequest)
     {
         ResponseService::noPermissionThenSendJson(self::UPDATE_PERMISSION);
+        $request->merge(['admin_notes' => trim((string) $request->input('admin_notes'))]);
+        $validated = $request->validate([
+            'admin_notes' => ['required', 'string', 'max:2000'],
+        ]);
 
         if ($auctionSheetVerificationRequest->status !== AuctionSheetVerificationRequest::STATUS_PENDING) {
             return response()->json([
@@ -117,6 +125,7 @@ class AuctionSheetVerificationAdminController extends Controller
 
         $auctionSheetVerificationRequest->update([
             'status' => AuctionSheetVerificationRequest::STATUS_CANCELED,
+            'admin_notes' => $validated['admin_notes'],
             'completed_at' => null,
         ]);
 

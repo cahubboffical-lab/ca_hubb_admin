@@ -30,6 +30,7 @@ abstract class ServiceRequest extends Model
         'visit_start_time',
         'visit_end_time',
         'status',
+        'admin_notes',
     ];
 
     protected $casts = [

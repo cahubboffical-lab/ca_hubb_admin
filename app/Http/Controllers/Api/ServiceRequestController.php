@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreServiceRequestRequest;
 use App\Models\ServiceRequest;
+use App\Models\ServicePackage;
 use Throwable;
 
 abstract class ServiceRequestController extends Controller
@@ -39,7 +40,7 @@ abstract class ServiceRequestController extends Controller
 
     private function responseData(ServiceRequest $serviceRequest): array
     {
-        return [
+        $data = [
             'id' => $serviceRequest->id,
             'service_type' => $serviceRequest->serviceType(),
             'service_package_id' => $serviceRequest->service_package_id,
@@ -50,7 +51,6 @@ abstract class ServiceRequestController extends Controller
             'model_year' => $serviceRequest->model_year,
             'car_variant' => $serviceRequest->car_variant,
             'car_condition' => $serviceRequest->car_condition,
-            'registration_area' => $serviceRequest->registration_area,
             'visit_area' => $serviceRequest->visit_area,
             'visit_date' => $serviceRequest->visit_date?->format('Y-m-d'),
             'visit_start_time' => $serviceRequest->visit_start_time,
@@ -58,5 +58,11 @@ abstract class ServiceRequestController extends Controller
             'status' => $serviceRequest->status,
             'created_at' => $serviceRequest->created_at?->toIso8601String(),
         ];
+
+        if ($serviceRequest->serviceType() === ServicePackage::TYPE_SELL_FOR_ME) {
+            $data['registration_area'] = $serviceRequest->registration_area;
+        }
+
+        return $data;
     }
 }

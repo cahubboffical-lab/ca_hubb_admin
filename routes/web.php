@@ -30,6 +30,7 @@ use App\Http\Controllers\SellerController;
 use App\Http\Controllers\SeoSettingController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SliderController;
+use App\Http\Controllers\StartupAdAdminController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\SystemUpdateController;
 use App\Http\Controllers\TipController;
@@ -361,6 +362,19 @@ Route::group(['middleware' => ['auth', 'language']], static function () {
     /*** Package Module : ENDS ***/
 
     /*** Service Package Module : START ***/
+    Route::prefix('startup-ads/{section}')
+        ->whereIn('section', ['startup', 'inspection'])
+        ->group(static function () {
+            Route::get('/', [StartupAdAdminController::class, 'index'])->name('startup-ads.index');
+            Route::get('/table', [StartupAdAdminController::class, 'table'])->name('startup-ads.table');
+            Route::get('/create', [StartupAdAdminController::class, 'create'])->name('startup-ads.create');
+            Route::post('/', [StartupAdAdminController::class, 'store'])->name('startup-ads.store');
+            Route::get('/{startupAdId}/edit', [StartupAdAdminController::class, 'edit'])->whereNumber('startupAdId')->name('startup-ads.edit');
+            Route::put('/{startupAdId}', [StartupAdAdminController::class, 'update'])->whereNumber('startupAdId')->name('startup-ads.update');
+            Route::patch('/{startupAdId}/active', [StartupAdAdminController::class, 'toggle'])->whereNumber('startupAdId')->name('startup-ads.toggle');
+            Route::delete('/{startupAdId}', [StartupAdAdminController::class, 'destroy'])->whereNumber('startupAdId')->name('startup-ads.destroy');
+        });
+
     Route::prefix('service-packages/{section}')
         ->whereIn('section', ['car-inspection', 'sell-for-me'])
         ->group(static function () {

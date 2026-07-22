@@ -22,6 +22,7 @@ class SellForMeRequest extends ServiceRequest
         'visit_start_time',
         'visit_end_time',
         'status',
+        'admin_notes',
     ];
 
     public function serviceType(): string

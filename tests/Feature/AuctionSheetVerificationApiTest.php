@@ -46,7 +46,8 @@ class AuctionSheetVerificationApiTest extends TestCase
             ->assertCreated()
             ->assertJsonPath('error', false)
             ->assertJsonPath('data.chassis_number', 'NCP165-TEST123')
-            ->assertJsonPath('data.status', 'pending');
+            ->assertJsonPath('data.status', 'pending')
+            ->assertJsonMissingPath('data.report_url');
 
         $this->postJson('/api/auction-sheet-verification-requests', $payload)
             ->assertOk()
