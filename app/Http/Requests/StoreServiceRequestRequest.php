@@ -31,6 +31,7 @@ abstract class StoreServiceRequestRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => ['prohibited'],
             'service_package_id' => ['nullable', 'integer', 'exists:service_packages,id'],
             'full_name' => ['required', 'string', 'max:150'],
             'phone_number' => ['required', 'string', 'max:30'],

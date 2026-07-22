@@ -2,12 +2,20 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class AuctionSheetVerificationApiTest extends TestCase
 {
     use DatabaseTransactions;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Sanctum::actingAs(User::query()->firstOrFail(), [], 'sanctum');
+    }
 
     public function test_price_endpoint_returns_the_single_authoritative_price(): void
     {

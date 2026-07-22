@@ -3,12 +3,20 @@
 namespace Tests\Feature;
 
 use App\Models\CarModel;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class VehicleServiceRequestApiTest extends TestCase
 {
     use DatabaseTransactions;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Sanctum::actingAs(User::query()->firstOrFail(), [], 'sanctum');
+    }
 
     /** @dataProvider endpoints */
     public function test_endpoints_return_structured_validation_errors(string $endpoint): void

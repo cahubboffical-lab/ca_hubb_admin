@@ -37,9 +37,11 @@ class AuctionSheetVerificationController extends Controller
     public function store(StoreAuctionSheetVerificationRequest $request)
     {
         try {
-            $result = DB::transaction(function () use ($request) {
+            $user = $request->user();
+            $result = DB::transaction(function () use ($request, $user) {
                 $phoneNumberNormalized = AuctionSheetVerificationRequest::normalizePhoneNumber($request->string('phone_number')->toString());
                 $existingRequest = AuctionSheetVerificationRequest::query()
+                    ->where('user_id', $user->id)
                     ->where('chassis_number', $request->string('chassis_number')->toString())
                     ->where('phone_number_normalized', $phoneNumberNormalized)
                     ->where('status', AuctionSheetVerificationRequest::STATUS_PENDING)
@@ -52,7 +54,7 @@ class AuctionSheetVerificationController extends Controller
 
                 $price = AuctionSheetVerificationPrice::current();
                 $verificationRequest = AuctionSheetVerificationRequest::create([
-                    'user_id' => $request->user('sanctum')?->id,
+                    'user_id' => $user->id,
                     'chassis_number' => $request->string('chassis_number')->toString(),
                     'phone_number' => $request->string('phone_number')->toString(),
                     'phone_number_normalized' => $phoneNumberNormalized,

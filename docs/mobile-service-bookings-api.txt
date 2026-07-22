@@ -1,0 +1,148 @@
+MOBILE API HANDOFF
+MY SERVICE BOOKINGS
+
+GENERAL
+
+All service request submissions now require a valid Sanctum Bearer token. The backend always saves user_id from the authenticated token. The mobile application must never send user_id.
+
+The following POST endpoints now require authentication:
+
+POST /api/car-inspection-requests
+POST /api/sell-for-me-requests
+POST /api/car-registration-requests
+POST /api/car-ownership-requests
+POST /api/car-finance-requests
+POST /api/auction-sheet-verification-requests
+
+Required headers:
+
+Authorization: Bearer USER_TOKEN
+Accept: application/json
+
+
+GET THE SIGNED-IN USER'S SERVICE BOOKINGS
+
+Method:
+GET
+
+Endpoint:
+/api/my-service-bookings
+
+Authentication:
+Required.
+
+Optional query parameters:
+
+page
+Positive integer. Default: 1.
+
+per_page
+Integer from 1 to 50. Default: 15.
+
+type
+One of:
+car_inspection
+sell_for_me
+car_registration
+car_ownership_transfer
+auction_sheet_verification
+car_finance
+
+status
+One of:
+pending
+in_progress
+canceled
+completed
+
+Example:
+
+GET /api/my-service-bookings?page=1&per_page=15&status=pending
+
+Successful response:
+HTTP 200 OK
+
+{
+  "error": false,
+  "message": "Service bookings fetched successfully.",
+  "data": {
+    "bookings": [
+      {
+        "booking_key": "car_inspection:42",
+        "id": 42,
+        "type": "car_inspection",
+        "title": "Car Inspection",
+        "status": "pending",
+        "created_at": "2026-07-22T12:30:00+05:00",
+        "updated_at": "2026-07-22T12:30:00+05:00",
+        "schedule": {
+          "date": "2026-07-24",
+          "start_time": "10:00:00",
+          "end_time": "11:00:00"
+        },
+        "details": {
+          "service_package_id": 3,
+          "city_id": 1,
+          "car_model_id": 12,
+          "model_year": 2022,
+          "car_variant": "GLX",
+          "car_condition": "used",
+          "visit_area": "Gulberg",
+          "registration_area": null
+        }
+      },
+      {
+        "booking_key": "car_registration:17",
+        "id": 17,
+        "type": "car_registration",
+        "title": "Car Registration",
+        "status": "in_progress",
+        "created_at": "2026-07-21T15:00:00+05:00",
+        "updated_at": "2026-07-22T09:00:00+05:00",
+        "schedule": null,
+        "details": {
+          "is_filer": true,
+          "car_model_id": 12,
+          "model_year": 2022,
+          "car_variant": "GLX",
+          "registration_place": "Punjab"
+        }
+      }
+    ],
+    "pagination": {
+      "current_page": 1,
+      "per_page": 15,
+      "total": 2,
+      "last_page": 1,
+      "has_more": false
+    }
+  }
+}
+
+booking_key is globally unique across service request tables. Mobile should use booking_key as its list key instead of id because different service types can have the same numeric id.
+
+schedule is populated for Car Inspection and Sell It For Me. It is null for services without a booked visit time.
+
+details contains fields relevant to that service type. It never includes sensitive admin notes or a full CNIC.
+
+Bookings are sorted newest first.
+
+
+VALIDATION ERROR
+
+HTTP 422 Unprocessable Entity
+
+{
+  "error": true,
+  "message": "The given data was invalid.",
+  "errors": {
+    "type": ["The selected type is invalid."]
+  }
+}
+
+
+UNAUTHENTICATED RESPONSE
+
+HTTP 401 Unauthorized
+
+The mobile application must redirect the user to sign in before submitting a service request or opening My Service Bookings.

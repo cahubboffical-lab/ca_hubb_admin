@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreServiceRequestRequest;
-use App\Models\ServiceRequest;
 use App\Models\ServicePackage;
+use App\Models\ServiceRequest;
 use Throwable;
 
 abstract class ServiceRequestController extends Controller
@@ -16,10 +16,11 @@ abstract class ServiceRequestController extends Controller
     protected function createRequest(StoreServiceRequestRequest $request)
     {
         try {
+            $user = $request->user();
             $modelClass = $this->modelClass();
             /** @var ServiceRequest $serviceRequest */
             $serviceRequest = $modelClass::create($request->validated() + [
-                'user_id' => $request->user('sanctum')?->id,
+                'user_id' => $user->id,
                 'status' => ServiceRequest::STATUS_PENDING,
             ]);
 

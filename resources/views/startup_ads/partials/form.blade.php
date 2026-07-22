@@ -32,11 +32,6 @@
     </div>
     <div class="col-md-6">
         <div class="form-group mb-3">
-            <label class="form-label d-block">{{ __('Type') }}</label>
-            <div class="form-control bg-light">{{ $startupAd->type ?? __('Startup / General') }}</div>
-            <small class="text-muted">{{ __('The type is controlled by the selected admin section.') }}</small>
-        </div>
-        <div class="form-group mb-3">
             <input type="hidden" name="is_active" value="0">
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="is_active" name="is_active" value="1"

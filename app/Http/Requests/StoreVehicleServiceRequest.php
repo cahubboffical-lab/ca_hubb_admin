@@ -26,6 +26,7 @@ class StoreVehicleServiceRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => ['prohibited'],
             'full_name' => ['required', 'string', 'max:150'],
             'phone_number' => ['required', 'string', 'max:30', 'regex:/^\+?[0-9()\-\s]+$/'],
             'is_filer' => ['required', 'boolean'],

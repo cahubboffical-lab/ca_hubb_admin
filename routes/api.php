@@ -1,15 +1,16 @@
 <?php
 
-use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Api\AuctionSheetVerificationController;
 use App\Http\Controllers\Api\CarFinanceController;
-use App\Http\Controllers\Api\CarModelController;
 use App\Http\Controllers\Api\CarInspectionRequestController;
+use App\Http\Controllers\Api\CarModelController;
 use App\Http\Controllers\Api\CarOwnershipRequestController;
 use App\Http\Controllers\Api\CarRegistrationRequestController;
 use App\Http\Controllers\Api\FuelPriceController;
-use App\Http\Controllers\Api\AuctionSheetVerificationController;
+use App\Http\Controllers\Api\MyServiceBookingController;
 use App\Http\Controllers\Api\SellForMeRequestController;
 use App\Http\Controllers\Api\StartupAdController;
+use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -79,19 +80,21 @@ Route::group(['middleware' => ['auth:sanctum']], static function () {
     Route::get('my-job-applications', [ApiController::class, 'myJobApplications']);
     Route::post('update-job-applications-status', [ApiController::class, 'updateJobStatus']);
     Route::post('logout', [ApiController::class, 'logout']);
+
+    Route::get('my-service-bookings', [MyServiceBookingController::class, 'index']);
+    Route::post('car-inspection-requests', [CarInspectionRequestController::class, 'store']);
+    Route::post('sell-for-me-requests', [SellForMeRequestController::class, 'store']);
+    Route::post('car-registration-requests', [CarRegistrationRequestController::class, 'store']);
+    Route::post('car-ownership-requests', [CarOwnershipRequestController::class, 'store']);
+    Route::post('car-finance-requests', [CarFinanceController::class, 'store']);
+    Route::post('auction-sheet-verification-requests', [AuctionSheetVerificationController::class, 'store']);
 });
 
 /* Non Authenticated Routes */
-Route::post('car-inspection-requests', [CarInspectionRequestController::class, 'store']);
-Route::post('sell-for-me-requests', [SellForMeRequestController::class, 'store']);
-Route::post('car-registration-requests', [CarRegistrationRequestController::class, 'store']);
-Route::post('car-ownership-requests', [CarOwnershipRequestController::class, 'store']);
 Route::get('car-finance-banks', [CarFinanceController::class, 'banks']);
-Route::post('car-finance-requests', [CarFinanceController::class, 'store']);
 Route::get('fuel-prices/latest', [FuelPriceController::class, 'latest']);
 Route::get('startup-ads', [StartupAdController::class, 'random']);
 Route::get('auction-sheet-verification-price', [AuctionSheetVerificationController::class, 'price']);
-Route::post('auction-sheet-verification-requests', [AuctionSheetVerificationController::class, 'store']);
 Route::get('user-exists', [ApiController::class, 'userExists']);
 Route::get('get-currencies', [ApiController::class, 'getCurrencies']);
 Route::get('get-car-models', [CarModelController::class, 'index']);

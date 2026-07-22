@@ -25,6 +25,7 @@ class StoreAuctionSheetVerificationRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'user_id' => ['prohibited'],
             'chassis_number' => ['required', 'string', 'max:50', 'regex:/^[A-Z0-9]+(?:-[A-Z0-9]+)*$/', 'regex:/[A-Z]/', 'regex:/[0-9]/'],
             'phone_number' => ['required', 'string', 'max:30', 'regex:/^\+?[0-9()\-\s]+$/'],
         ];

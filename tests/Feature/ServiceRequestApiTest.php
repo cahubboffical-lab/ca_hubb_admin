@@ -4,13 +4,21 @@ namespace Tests\Feature;
 
 use App\Models\CarModel;
 use App\Models\City;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class ServiceRequestApiTest extends TestCase
 {
     use DatabaseTransactions;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Sanctum::actingAs(User::query()->firstOrFail(), [], 'sanctum');
+    }
 
     /**
      * @dataProvider serviceRequestEndpoints

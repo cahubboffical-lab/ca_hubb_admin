@@ -216,7 +216,6 @@ class StartupAdAdminController extends Controller
             'url_link' => $startupAd->url
                 ? '<a href="'.e($startupAd->url).'" target="_blank" rel="noopener noreferrer">'.e($startupAd->url).'</a>'
                 : '-',
-            'type' => e($startupAd->type ?? '-'),
             'is_active' => $startupAd->is_active,
             'toggle_url' => route('startup-ads.toggle', ['section' => $section, 'startupAdId' => $startupAd->id]),
             'created_at' => $startupAd->created_at?->format('Y-m-d H:i'),

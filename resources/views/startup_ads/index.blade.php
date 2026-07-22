@@ -34,7 +34,6 @@
                             <th data-field="name" data-sortable="true">{{ __('Name') }}</th>
                             <th data-field="image" data-formatter="imageFormatter">{{ __('Image') }}</th>
                             <th data-field="url_link" data-escape="false">{{ __('URL') }}</th>
-                            <th data-field="type">{{ __('Type') }}</th>
                             <th data-field="is_active"
                                 @can($config['permission_prefix'].'-update') data-formatter="startupAdStatusFormatter" @else data-formatter="startupAdStatusBadgeFormatter" @endcan>
                                 {{ __('Active') }}

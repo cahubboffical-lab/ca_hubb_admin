@@ -20,12 +20,14 @@ abstract class VehicleServiceRequestController extends Controller
     protected function createRequest(StoreVehicleServiceRequest $request)
     {
         try {
-            $result = DB::transaction(function () use ($request) {
+            $user = $request->user();
+            $result = DB::transaction(function () use ($request, $user) {
                 $modelClass = $this->modelClass();
                 $phoneNumberNormalized = VehicleServiceRequest::normalizePhoneNumber($request->string('phone_number')->toString());
 
                 /** @var VehicleServiceRequest|null $existingRequest */
                 $existingRequest = $modelClass::query()
+                    ->where('user_id', $user->id)
                     ->where('phone_number_normalized', $phoneNumberNormalized)
                     ->where('car_model_id', $request->integer('car_model_id'))
                     ->where('model_year', $request->integer('model_year'))
@@ -43,7 +45,7 @@ abstract class VehicleServiceRequestController extends Controller
 
                 /** @var VehicleServiceRequest $serviceRequest */
                 $serviceRequest = $modelClass::create([
-                    'user_id' => $request->user('sanctum')?->id,
+                    'user_id' => $user->id,
                     'full_name' => $request->string('full_name')->toString(),
                     'phone_number' => $request->string('phone_number')->toString(),
                     'phone_number_normalized' => $phoneNumberNormalized,

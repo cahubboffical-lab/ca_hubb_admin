@@ -7,8 +7,8 @@ use App\Models\CarFinanceRequest;
 use App\Models\CarModel;
 use App\Models\City;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -31,9 +31,7 @@ class CarFinanceApiTest extends TestCase
     public function test_finance_request_requires_authentication(): void
     {
         $this->postJson('/api/car-finance-requests', [])
-            ->assertUnauthorized()
-            ->assertJsonPath('error', true)
-            ->assertJsonPath('message', 'Please sign in to submit a car finance request.');
+            ->assertUnauthorized();
     }
 
     public function test_new_car_request_uses_fallback_and_server_calculations_and_reuses_duplicate(): void
