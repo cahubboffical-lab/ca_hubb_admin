@@ -2,6 +2,16 @@
 @section('title')
     {{__("FAQ")}}
 @endsection
+@section('css')
+    <style>
+        .faq-page, .faq-page .row, .faq-page .card, .faq-page .card-body, .faq-page .bootstrap-table {
+            min-width: 0;
+            max-width: 100%;
+        }
+        .faq-page .fixed-table-container { max-width: 100%; overflow-x: clip; }
+        .faq-page td { white-space: normal !important; overflow-wrap: anywhere; }
+    </style>
+@endsection
 
 @section('page-title')
     <div class="page-title">
@@ -14,7 +24,7 @@
 @endsection
 
 @section('content')
-    <section class="section">
+    <section class="section faq-page">
         @can('faq-create')
             <div class="row">
                 <form class="create-form" action="{{ route('faq.store') }}" method="POST" data-parsley-validate enctype="multipart/form-data">
@@ -73,7 +83,6 @@
                                        data-side-pagination="server" data-pagination="true"
                                        data-page-list="[5, 10, 20, 50, 100, 200]" data-search="true"
                                        data-toolbar="#toolbar" data-show-columns="true" data-show-refresh="true"
-                                       data-fixed-columns="true" data-fixed-number="1" data-fixed-right-number="1"
                                        data-trim-on-search="false" data-responsive="true" data-sort-name="id"
                                        data-sort-order="desc" data-pagination-successively-size="3"
                                        data-escape="true"

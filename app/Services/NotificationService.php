@@ -108,6 +108,33 @@ class NotificationService {
         foreach ($registrationIDs as $registrationID) {
             $platform = $deviceInfo->first(fn($q) => $q->fcm_token == $registrationID);
             if (!$platform) continue;
+            $image = !empty($dataWithTitle['image']) ? (string) $dataWithTitle['image'] : null;
+            $androidNotification = [
+                'sound' => 'default',
+            ];
+            if ($image !== null) {
+                $androidNotification['image'] = $image;
+            }
+
+            $apnsConfig = [
+                'headers' => [
+                    'apns-priority' => '10',
+                ],
+                'payload' => [
+                    'aps' => [
+                        'alert' => [
+                            'title' => $title,
+                            'body'  => $message,
+                        ],
+                        'sound' => 'default',
+                        'mutable-content' => 1,
+                    ],
+                ],
+            ];
+            if ($image !== null) {
+                $apnsConfig['fcm_options'] = ['image' => $image];
+            }
+
              $data = [
             'message' => [
                 'token' => $registrationID,
@@ -124,30 +151,11 @@ class NotificationService {
                 // Android config
                 'android' => [
                     'priority' => 'high',
-                    'notification' => [
-                        'image' => !empty($dataWithTitle['image']) ? $dataWithTitle['image'] : null,
-                    ],
+                    'notification' => $androidNotification,
                 ],
 
                 // iOS (APNs) config
-                'apns' => [
-                    'headers' => [
-                        'apns-priority' => '10',
-                    ],
-                    'payload' => [
-                        'aps' => [
-                            'alert' => [
-                                'title' => $title,
-                                'body'  => $message,
-                            ],
-                            'sound' => 'default',
-                            'mutable-content' => 1, // REQUIRED for images
-                        ],
-                    ],
-                    'fcm_options' => [
-                        'image' => !empty($dataWithTitle['image']) ? $dataWithTitle['image'] : null,
-                    ],
-                ],
+                'apns' => $apnsConfig,
                 ],
             ];
 

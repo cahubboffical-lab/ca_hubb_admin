@@ -3,6 +3,12 @@
 @section('title')
     {{ __('Update Advertisements') }}
 @endsection
+@section('css')
+    <style>
+        #listing, #listing .row { max-width: 100%; overflow-x: clip; }
+        #listing .select2-container { width: 100% !important; max-width: 100%; }
+    </style>
+@endsection
 
 @section('page-title')
     <div class="page-title">
@@ -69,7 +75,7 @@
                                 </div>
                                 <div class="col-6 mb-3">
                                     <label>{{ __('Select Currency') }}</label>
-                                    <select class="form-control select2" id="currency" name="currency_id">
+                                    <select class="form-control select2 w-100" id="currency" name="currency_id" style="width: 100%;">
                                         @foreach ($currencies as $currency)
                                             <option value="{{ $currency->id }}"
                                                 {{ $item->currency_id == $currency->id ? 'selected' : '' }}>

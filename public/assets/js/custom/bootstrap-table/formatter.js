@@ -9,11 +9,16 @@ function imageFormatter(value) {
 }
 
 function galleryImageFormatter(value) {
-    if (value) {
-        let html = '<div class="gallery">';
-        $.each(value, function (index, data) {
-            html += '<a href="' + data.image + '"><img class="rounded avatar-md shadow img-fluid m-1" alt="" src="' + data.image + '" width="55" onerror="onErrorImage(event)"></a>';
-        })
+    if (Array.isArray(value) && value.length) {
+        const firstImage = value[0];
+        let html = '<div class="gallery d-inline-flex align-items-center flex-nowrap" style="height: 60px;">';
+        html += '<a href="' + firstImage.image + '" class="d-inline-block"><img class="rounded shadow" alt="" src="' + firstImage.image + '" width="55" height="55" style="width:55px;height:55px;object-fit:cover;" onerror="onErrorImage(event)"></a>';
+        $.each(value.slice(1), function (index, data) {
+            html += '<a href="' + data.image + '" class="d-none" aria-hidden="true"></a>';
+        });
+        if (value.length > 1) {
+            html += '<span class="badge bg-secondary ms-1">+' + (value.length - 1) + '</span>';
+        }
         html += "</div>"
         return html;
     } else {

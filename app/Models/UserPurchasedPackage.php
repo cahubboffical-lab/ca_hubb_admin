@@ -25,7 +25,8 @@ class UserPurchasedPackage extends Model {
     protected $appends = ['remaining_days', 'remaining_item_limit', 'status'];
 
     public function package() {
-        return $this->belongsTo(Package::class);
+        // Preserve package details in purchase history after an admin archives it.
+        return $this->belongsTo(Package::class)->withTrashed();
     }
 
     public function user() {

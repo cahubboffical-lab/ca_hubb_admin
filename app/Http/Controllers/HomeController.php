@@ -25,7 +25,17 @@ class HomeController extends Controller {
 
 
     public function index() {
-        $items = Item::select('id','name','price','latitude','longitude','city','state','country','image')->where('clicks','>',0)->where('status', 'approved')->inRandomOrder()->limit(50)->get();
+        $items = Item::select('id', 'name', 'price', 'latitude', 'longitude', 'city', 'state', 'country', 'image')
+            ->where('clicks', '>', 0)
+            ->where('status', 'approved')
+            ->whereBetween('latitude', [-90, 90])
+            ->whereBetween('longitude', [-180, 180])
+            ->where(static function ($query) {
+                $query->where('latitude', '!=', 0)->orWhere('longitude', '!=', 0);
+            })
+            ->inRandomOrder()
+            ->limit(50)
+            ->get();
         $categories = Category::withCount('items')->with('translations')->whereHas('items')->get();
 
         $category_name = array();
@@ -62,6 +72,9 @@ class HomeController extends Controller {
             $user = Auth::user();
             if (!Hash::check($request->old_password, Auth::user()->password)) {
                 ResponseService::errorResponse("Incorrect old password");
+            }
+            if (Hash::check($request->new_password, $user->password)) {
+                ResponseService::validationError('New password must be different from the current password.');
             }
             $user->password = Hash::make($request->confirm_password);
             $user->update();

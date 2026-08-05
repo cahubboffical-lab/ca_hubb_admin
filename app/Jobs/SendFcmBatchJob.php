@@ -36,34 +36,25 @@ class SendFcmBatchJob implements ShouldQueue
     {
         Log::info("🔔 SendFcmBatchJob started");
 
-        // ✅ If sendToAll = true
+        // Send directly to every registered device. Relying on the allUsers topic
+        // meant that registered tokens which had never subscribed to that topic
+        // silently missed admin notifications.
         if ($this->sendToAll) {
-            // Fetch tokens with user preference
-            $tokens = UserFcmToken::with('user')
+            UserFcmToken::with('user')
                 ->whereHas('user', fn($q) => $q->where('notification', 1))
-                ->get(['fcm_token', 'platform_type']);
-
-            // Split tokens by platform
-            $androidIosTokens = $tokens->whereIn('platform_type', ['Android', 'iOS'])->pluck('fcm_token')->toArray();
-            $otherTokens = $tokens->whereNotIn('platform_type', ['Android', 'iOS'])->pluck('fcm_token')->toArray();
-
-            // ✅ Send Android/iOS via Topic
-            if (!empty($androidIosTokens)) {
-                NotificationService::sendFcmNotification(
-                    [], $this->title, $this->message, $this->type, $this->customBodyFields, true
-                );
-                Log::info("📱 Topic-based notification sent to Android/iOS users.");
-            }
-
-            // ✅ Send Others via Chunk (if any)
-            if (!empty($otherTokens)) {
-                collect($otherTokens)->chunk(500)->each(function ($chunk) {
+                ->select(['id', 'fcm_token', 'platform_type', 'user_id'])
+                ->chunkById(500, function ($tokens) {
                     NotificationService::sendFcmNotification(
-                        $chunk->toArray(), $this->title, $this->message, $this->type, $this->customBodyFields, false
+                        $tokens->pluck('fcm_token')->filter()->unique()->values()->all(),
+                        $this->title,
+                        $this->message,
+                        $this->type,
+                        $this->customBodyFields,
+                        false
                     );
                 });
-                Log::info("💻 Chunk-based notification sent to other platform users.");
-            }
+
+            Log::info("📱 Notification sent directly to all registered devices.");
 
         } else {
             // ✅ Send to specific selected users

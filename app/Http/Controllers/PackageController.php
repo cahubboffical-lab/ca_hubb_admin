@@ -273,14 +273,32 @@ class PackageController extends Controller {
             $tempRow = $row->toArray();
             // Show "Global" or "Category Based" instead of actual category names
             $tempRow['category_names'] = $row->is_global == 1 ? 'Global' : 'Category Based';
+            $operate = '';
             if (Auth::user()->can('advertisement-listing-package-update')) {
-                $tempRow['operate'] = BootstrapTableService::editButton(route('package.edit', $row->id));
+                $operate .= BootstrapTableService::editButton(route('package.edit', $row->id));
             }
+            if (Auth::user()->can('advertisement-listing-package-delete')) {
+                $operate .= BootstrapTableService::deleteButton(route('package.destroy', $row->id));
+            }
+            $tempRow['operate'] = $operate;
             $rows[] = $tempRow;
         }
 
         $bulkData['rows'] = $rows;
         return response()->json($bulkData);
+    }
+
+    public function destroy($id)
+    {
+        ResponseService::noPermissionThenSendJson('advertisement-listing-package-delete');
+
+        try {
+            Package::findOrFail($id)->delete();
+            ResponseService::successResponse('Package deleted successfully');
+        } catch (Throwable $th) {
+            ResponseService::logErrorResponse($th, 'PackageController -> destroy');
+            ResponseService::errorResponse('Something Went Wrong');
+        }
     }
 
     public function edit($id) {

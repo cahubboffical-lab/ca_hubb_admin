@@ -4,6 +4,13 @@
     {{ __('Create Advertisement') }}
 @endsection
 
+@section('css')
+    <style>
+        #listing, #listing .row { max-width: 100%; overflow-x: clip; }
+        #listing .select2-container { width: 100% !important; max-width: 100%; }
+    </style>
+@endsection
+
 @section('page-title')
     <div class="page-title">
         <div class="row">
@@ -68,7 +75,7 @@
 
                                 <div class="col-6 mb-3">
                                     <label>{{ __('Select Currency') }} <span class="text-danger">*</span></label>
-                                    <select class="form-control select2" id="currency" name="currency_id" required>
+                                    <select class="form-control select2 w-100" id="currency" name="currency_id" required style="width: 100%;">
                                         <option value="">{{ __('--Select Currency--') }}</option>
                                         @foreach ($currencies as $currency)
                                             <option value="{{ $currency->id }}">{{ $currency->name }}</option>

@@ -164,7 +164,10 @@
                     @endcanany
 
                     @canany(['car-inspection-request-list', 'car-inspection-package-list', 'car-inspection-package-create', 'car-inspection-package-update', 'car-inspection-package-delete', 'inspection-ad-list', 'inspection-ad-create', 'inspection-ad-update', 'inspection-ad-delete'])
-                        <div class="sidebar-new-title mt-2">{{ __('Car Inspection') }}</div>
+                        <div class="sidebar-new-title mt-2">
+                            @if ($pendingServices['car_inspection'] ?? false)<span class="service-pending-dot" title="{{ __('Pending request') }}" aria-label="{{ __('Pending request') }}"></span>@endif
+                            {{ __('Car Inspection') }}
+                        </div>
                         @can('car-inspection-request-list')
                             <li class="sidebar-item sidebar-submenus">
                                 <a href="{{ route('service-packages.requests', ['section' => 'car-inspection']) }}" class='sidebar-link'>
@@ -192,7 +195,10 @@
                     @endcanany
 
                     @canany(['sell-for-me-request-list', 'sell-for-me-package-list', 'sell-for-me-package-create', 'sell-for-me-package-update', 'sell-for-me-package-delete'])
-                        <div class="sidebar-new-title mt-2">{{ __('Sell for Me') }}</div>
+                        <div class="sidebar-new-title mt-2">
+                            @if ($pendingServices['sell_for_me'] ?? false)<span class="service-pending-dot" title="{{ __('Pending request') }}" aria-label="{{ __('Pending request') }}"></span>@endif
+                            {{ __('Sell for Me') }}
+                        </div>
                         @can('sell-for-me-request-list')
                             <li class="sidebar-item sidebar-submenus">
                                 <a href="{{ route('service-packages.requests', ['section' => 'sell-for-me']) }}" class='sidebar-link'>
@@ -212,7 +218,10 @@
                     @endcanany
 
                     @can('auction-sheet-verification-request-list')
-                        <div class="sidebar-new-title mt-2">{{ __('Auction Sheet Verification') }}</div>
+                        <div class="sidebar-new-title mt-2">
+                            @if ($pendingServices['auction_sheet_verification'] ?? false)<span class="service-pending-dot" title="{{ __('Pending request') }}" aria-label="{{ __('Pending request') }}"></span>@endif
+                            {{ __('Auction Sheet Verification') }}
+                        </div>
                         <li class="sidebar-item sidebar-submenus">
                             <a href="{{ route('auction-sheet-verification.index') }}" class='sidebar-link'>
                                 <i class="bi bi-file-earmark-check"></i>
@@ -222,7 +231,10 @@
                     @endcan
 
                     @can('car-registration-request-list')
-                        <div class="sidebar-new-title mt-2">{{ __('Car Registration') }}</div>
+                        <div class="sidebar-new-title mt-2">
+                            @if ($pendingServices['car_registration'] ?? false)<span class="service-pending-dot" title="{{ __('Pending request') }}" aria-label="{{ __('Pending request') }}"></span>@endif
+                            {{ __('Car Registration') }}
+                        </div>
                         <li class="sidebar-item sidebar-submenus">
                             <a href="{{ route('vehicle-service-requests.index', ['section' => 'car-registration']) }}" class='sidebar-link'>
                                 <i class="bi bi-card-checklist"></i>
@@ -232,7 +244,10 @@
                     @endcan
 
                     @can('car-ownership-request-list')
-                        <div class="sidebar-new-title mt-2">{{ __('Car Ownership Transfer') }}</div>
+                        <div class="sidebar-new-title mt-2">
+                            @if ($pendingServices['car_ownership'] ?? false)<span class="service-pending-dot" title="{{ __('Pending request') }}" aria-label="{{ __('Pending request') }}"></span>@endif
+                            {{ __('Car Ownership Transfer') }}
+                        </div>
                         <li class="sidebar-item sidebar-submenus">
                             <a href="{{ route('vehicle-service-requests.index', ['section' => 'car-ownership']) }}" class='sidebar-link'>
                                 <i class="bi bi-arrow-left-right"></i>
@@ -242,7 +257,10 @@
                     @endcan
 
                     @canany(['car-finance-bank-list', 'car-finance-bank-create', 'car-finance-bank-update', 'car-finance-bank-delete', 'car-finance-request-list', 'car-finance-request-update'])
-                        <div class="sidebar-new-title mt-2">{{ __('Car Finance') }}</div>
+                        <div class="sidebar-new-title mt-2">
+                            @if ($pendingServices['car_finance'] ?? false)<span class="service-pending-dot" title="{{ __('Pending request') }}" aria-label="{{ __('Pending request') }}"></span>@endif
+                            {{ __('Car Finance') }}
+                        </div>
                         @canany(['car-finance-bank-list', 'car-finance-bank-create', 'car-finance-bank-update', 'car-finance-bank-delete'])
                             <li class="sidebar-item sidebar-submenus">
                                 <a href="{{ route('car-finance-banks.index') }}" class='sidebar-link'>

@@ -26,7 +26,7 @@
                         </div>
                         <label for="new_password" class="form-label">{{ __('New Password')}}</label>
                         <div class="form-group position-relative has-icon-right mb-4 mandatory">
-                            <input type="password" name="new_password" id="new_password" class="form-control form-control-solid" value="" placeholder="{{__("New Password")}}" data-parsley-minlength="8" data-parsley-uppercase="1" data-parsley-lowercase="1" data-parsley-number="1" data-parsley-special="1" data-parsley-required/>
+                            <input type="password" name="new_password" id="new_password" class="form-control form-control-solid" value="" placeholder="{{__("New Password")}}" data-parsley-minlength="8" data-parsley-notequalto="#old_password" data-parsley-notequalto-message="{{ __('New password must be different from the current password.') }}" data-parsley-uppercase="1" data-parsley-lowercase="1" data-parsley-number="1" data-parsley-special="1" data-parsley-required/>
                             <div class="form-control-icon lh-1 top-0 mt-2">
                                 <i class="bi bi-eye toggle-password"></i>
                             </div>

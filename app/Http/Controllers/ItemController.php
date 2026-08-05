@@ -36,8 +36,12 @@ class ItemController extends Controller
         ResponseService::noAnyPermissionThenRedirect(['advertisement-list', 'advertisement-update', 'advertisement-delete']);
         $countries = Country::all();
         $categories = Category::all();
+        $states = Item::query()->whereNotNull('state')->where('state', '!=', '')
+            ->distinct()->orderBy('state')->pluck('state');
+        $cities = Item::query()->whereNotNull('city')->where('city', '!=', '')
+            ->distinct()->orderBy('city')->pluck('city');
 
-        return view('items.index', compact('countries', 'categories'));
+        return view('items.index', compact('countries', 'categories', 'states', 'cities'));
     }
 
     public function show($status, Request $request)
@@ -213,7 +217,7 @@ class ItemController extends Controller
 
     public function searchState(Request $request)
     {
-        $countryName = trim($request->query('country_name'));
+        $countryName = trim((string) $request->query('country_name'));
         if ($countryName == 'All') {
             return response()->json(['message' => 'Success', 'data' => []]);
         }
@@ -222,14 +226,14 @@ class ItemController extends Controller
         if (! $country) {
             return response()->json(['message' => 'Success', 'data' => []]);
         }
-        $states = State::where('country_id', $country->id)->get();
+        $states = State::where('country_id', $country->id)->orderBy('name')->get(['id', 'name']);
 
         return response()->json(['message' => 'Success', 'data' => $states]);
     }
 
     public function searchCities(Request $request)
     {
-        $stateName = trim($request->query('state_name'));
+        $stateName = trim((string) $request->query('state_name'));
         if ($stateName == 'All') {
             return response()->json(['message' => 'Success', 'data' => []]);
         }
@@ -237,7 +241,7 @@ class ItemController extends Controller
         if (! $state) {
             return response()->json(['message' => 'Success', 'data' => []]);
         }
-        $cities = City::where('state_id', $state->id)->get();
+        $cities = City::where('state_id', $state->id)->orderBy('name')->get(['id', 'name']);
 
         return response()->json(['message' => 'Success', 'data' => $cities]);
     }
@@ -342,7 +346,9 @@ class ItemController extends Controller
             }
 
             return $field;
-        })->filter();
+        })->filter()->unique(static function ($field) {
+            return Str::lower(trim((string) $field->name));
+        })->values();
         $countries = Country::all();
         $selected_category = [$item->category_id];
 
@@ -360,13 +366,17 @@ class ItemController extends Controller
             'longitude' => 'nullable',
             'address' => 'nullable',
             'contact' => 'nullable',
-            'image' => 'nullable|mimes:jpeg,jpg,png|max:7168',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png|max:7168',
             'custom_fields' => 'nullable',
             'custom_field_files' => 'nullable|array',
             'custom_field_files.*' => 'nullable|mimes:jpeg,png,jpg,pdf,doc|max:7168',
             'gallery_images' => 'nullable|array',
+            'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:7168',
             'admin_edit_reason' => 'required|string|max:1000',
             'currency_id' => 'nullable|exists:currencies,id',
+        ], [
+            'image.image' => 'The main image is invalid or cannot be processed. Please upload a valid JPG or PNG image.',
+            'gallery_images.*.image' => 'One of the gallery images is invalid or cannot be processed. Please upload valid JPG or PNG images.',
         ]);
 
         // dd($request->all());
@@ -571,7 +581,11 @@ class ItemController extends Controller
                 $q->whereIn('category_id', $categoryIds);
             })
             ->where('status', 1)
-            ->get();
+            ->get()
+            ->unique(static function ($field) {
+                return Str::lower(trim((string) $field->name));
+            })
+            ->values();
 
         return response()->json([
             'fields' => $customFields,
@@ -700,15 +714,18 @@ class ItemController extends Controller
             'longitude' => 'required',
             'address' => 'nullable',
             'contact' => 'nullable',
-            'image' => 'required|mimes:jpeg,jpg,png|max:7168',
+            'image' => 'required|image|mimes:jpeg,jpg,png|max:7168',
             'custom_fields' => 'nullable',
             'custom_field_files' => 'nullable|array',
             'custom_field_files.*' => 'nullable|mimes:jpeg,png,jpg,pdf,doc|max:7168',
             'gallery_images' => 'nullable|array',
-            'gallery_images.*' => 'nullable|mimes:jpeg,png,jpg|max:7168',
+            'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:7168',
             'video_link' => 'nullable|url',
             'category_id' => 'required|integer',
             'currency_id' => 'nullable|integer',
+        ], [
+            'image.image' => 'The main image is invalid or cannot be processed. Please upload a valid JPG or PNG image.',
+            'gallery_images.*.image' => 'One of the gallery images is invalid or cannot be processed. Please upload valid JPG or PNG images.',
         ]);
 
         if ($validator->fails()) {

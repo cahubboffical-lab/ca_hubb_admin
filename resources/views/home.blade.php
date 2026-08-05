@@ -7,6 +7,14 @@
 .card_title {
     white-space: normal;
     word-break: break-word;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+}
+.dashboard-summary-card .row {
+    width: 100%;
+    align-items: center;
+    margin: 0;
 }
 </style>
     <section class="section">
@@ -17,7 +25,7 @@
                     <div class="col-sm-6 col-12 mb-3">
                         <a href="{{ url('customer') }}">
                             <div class="card h-100" style="width: 100%;">
-                                <div class="total_customer d-flex">
+                                <div class="total_customer d-flex dashboard-summary-card">
                                     <div class="curtain"></div>
                                     <div class="row">
                                         <div class="col-4 col-md-12 ">
@@ -38,7 +46,7 @@
                     <div class="col-sm-6 col-12 mb-3">
                         <a href="{{ url('advertisement') }}">
                             <div class="card h-100" style="width: 100%;">
-                                <div class="total_items d-flex">
+                                <div class="total_items d-flex dashboard-summary-card">
                                     <div class="curtain"></div>
                                     <div class="row">
                                         <div class="col-4 col-md-12 ">
@@ -59,7 +67,7 @@
                     <div class="col-sm-6 col-12 mb-3">
                         <a href="{{ route('category.index') }}">
                             <div class="card h-100" style="width: 100%;">
-                                <div class="item_for_sale d-flex">
+                                <div class="item_for_sale d-flex dashboard-summary-card">
                                     <div class="curtain"></div>
                                     <div class="row">
                                         <div class="col-4 col-md-12 ">
@@ -80,7 +88,7 @@
                     <div class="col-sm-6 col-12 mb-3">
                         <a href="{{ route('custom-fields.index') }}">
                             <div class="card h-100" style="width: 100%;">
-                                <div class="properties_for_rent d-flex">
+                                <div class="properties_for_rent d-flex dashboard-summary-card">
                                     <div class="curtain"></div>
                                     <div class="row">
                                         <div class="col-4 col-md-12 ">
@@ -155,7 +163,6 @@
                 </table>
             </div>
         </div>
-        <input type="hidden" name="map_data" id="map_data" value="{{ $items }}">
         {{-- <div class="row"> --}}
             <div class="col-md-12 col-sm-12">
                 <div class="card map_title h-100">
@@ -244,63 +251,36 @@
 @endsection
 @section('script')
 <script>
-    var mapData = JSON.parse($('#map_data').val());
-        //  var currency_symbol = $('#currency_symbol').val();
-        //  var featured='<div class="featured_tag"><div class="featured_lable">Featured</div>';
-        var markerValues = mapData.map(function(item, index) {
-    return {
-        latLng: [parseFloat(item.latitude), parseFloat(item.longitude)],
-        name: item.city,
-        label: item.city,
-        style: {
-            fill: '#00B2CA',
-            stroke: '#00000'
-        },
-        card: {
-            content: '<div class="card_map">' +
-                        '<div class="image-container">' +
-                            '<img src="' + item.image + '" alt="' + item.name + '" class="object-fit-cover">' +
-                        '</div>' +
-                        '<div class="title mt-3">' + item.name + '</div>' +
-                        '<div class="price mt-2">' + item.price + '</div>' +
-                        '<div class="city mt-2">' +
-                            '<i class="bi bi-geo-alt"></i> ' + item.city +
-                        '</div>' +
-                    '</div>'
-        }
-    };
-});
+    const mapData = @json($items);
+    const dashboardMap = L.map('world-map', { scrollWheelZoom: false }).setView([30.3753, 69.3451], 5);
+    const markerBounds = [];
 
-            $('#world-map').vectorMap({
-            map: 'world_mill',
-            // scaleColors: ['#116D6E', '#116D6E'],
-            backgroundColor: '#fffff',
-            markerStyle: {
-            initial: {
-            strokeWidth: 1,
-            stroke: '#383F47',
-            fillOpacity: 1,
-            r: 8,
-            },
-            onMarkerLabelShow: function(event, label, index) {
-            // Add custom CSS classes to the label element
-            label.addClass('custom-marker-label');
-            },
-            },
-            markers: markerValues,
-            series: {
-            markers: [{
-            // attribute: 'fill',
-            scale: {}, // Empty scale object to be populated dynamically
-            values: mapData.map(function(item) {
-            return item.city;
-            })
-            }]
-            },
-            onMarkerTipShow: function(event, label, index) {
-            var cardContent = markerValues[index].card.content;
-            label.html(cardContent);
-            }
-            });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(dashboardMap);
+
+    const escapeMapText = value => $('<div>').text(value ?? '').html();
+
+    mapData.forEach(item => {
+        const latitude = Number.parseFloat(item.latitude);
+        const longitude = Number.parseFloat(item.longitude);
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return;
+
+        const position = [latitude, longitude];
+        markerBounds.push(position);
+        L.marker(position).addTo(dashboardMap).bindPopup(
+            '<div class="card_map">' +
+                '<div class="image-container"><img src="' + escapeMapText(item.image) + '" alt="" class="object-fit-cover"></div>' +
+                '<div class="title mt-3">' + escapeMapText(item.name) + '</div>' +
+                '<div class="price mt-2">' + escapeMapText(item.price) + '</div>' +
+                '<div class="city mt-2"><i class="bi bi-geo-alt"></i> ' + escapeMapText(item.city) + '</div>' +
+            '</div>'
+        );
+    });
+
+    if (markerBounds.length) {
+        dashboardMap.fitBounds(markerBounds, { padding: [30, 30], maxZoom: 12 });
+    }
 </script>
 @endsection

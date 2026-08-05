@@ -4,6 +4,33 @@
     {{ __('Advertisements') }}
 @endsection
 
+@section('css')
+    <style>
+        .advertisement-page,
+        .advertisement-page .card,
+        .advertisement-page .card-body,
+        .advertisement-page .bootstrap-table {
+            min-width: 0;
+            max-width: 100%;
+        }
+
+        .advertisement-page #filters {
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .advertisement-page .table-responsive {
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .advertisement-page #table_list .btn.icon {
+            margin: .25rem;
+        }
+    </style>
+@endsection
+
 @section('page-title')
     <div class="page-title">
         <div class="row">
@@ -19,7 +46,7 @@
 @endsection
 
 @section('content')
-    <section class="section">
+    <section class="section advertisement-page">
         <div class="card">
             <div class="card-body">
                 <div class="row">
@@ -54,8 +81,8 @@
                             </button>
                         </div> --}}
 
-                        <div id="filters" class="d-flex flex-wrap align-items-end gap-2 mb-3">
-                            <div class="col-md-2">
+                        <div id="filters" class="row g-2 align-items-end mb-3">
+                            <div class="col-12 col-md-2">
                                 <label for="filter">{{ __('Status') }}</label>
                                 <select class="form-control" id="filter" data-field="status">
                                     <option value="">{{ __('All') }}</option>
@@ -69,7 +96,7 @@
                                     <option value="resubmitted">{{ __('Resubmitted') }}</option>
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-12 col-md-3">
                                 <label for="filter-featured-premium">{{ __('Featured') }}</label>
                                 <select class="form-control bootstrap-table-filter-control-featured_status"
                                     id="filter_featured_premium">
@@ -78,7 +105,7 @@
                                     {{-- <option value="premium">{{ __('Premium') }}</option> --}}
                                 </select>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-12 col-md-5">
                                 <label for="p_category">{{ __('Category') }}</label>
                                 <select name="category_id" id="p_category"
                                     class="form-control bootstrap-table-filter-control-category" aria-label="category"
@@ -87,7 +114,7 @@
                                     @include('category.dropdowntree', ['categories' => $categories])
                                 </select>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-12 col-md-2">
                                 <label for="filter_country">{{ __('Country') }}</label>
                                 <select class="form-control bootstrap-table-filter-control-country"
                                     id="filter_country_item_test">
@@ -97,18 +124,24 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-12 col-md-2">
                                 <label for="filter_state">{{ __('State') }}</label>
                                 <select name="state_id" class="form-control bootstrap-table-filter-control-state"
                                     id="filter_state_item">
                                     <option value="">{{ __('All') }}</option>
+                                    @foreach ($states as $state)
+                                        <option value="{{ $state }}">{{ $state }}</option>
+                                    @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-12 col-md-2">
                                 <label for="filter_city">{{ __('City') }}</label>
                                 <select name="city_id" class="form-control bootstrap-table-filter-control-city"
                                     id="filter_city_item">
                                     <option value="">{{ __('All') }}</option>
+                                    @foreach ($cities as $city)
+                                        <option value="{{ $city }}">{{ $city }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>

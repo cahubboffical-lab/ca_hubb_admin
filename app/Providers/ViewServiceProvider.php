@@ -2,10 +2,17 @@
 
 namespace App\Providers;
 
+use App\Models\AuctionSheetVerificationRequest;
+use App\Models\CarFinanceRequest;
+use App\Models\CarInspectionRequest;
+use App\Models\CarOwnershipRequest;
+use App\Models\CarRegistrationRequest;
 use App\Models\Language;
+use App\Models\SellForMeRequest;
 use App\Models\Setting;
 use App\Services\CachingService;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -64,7 +71,25 @@ class ViewServiceProvider extends ServiceProvider
 
         View::composer('layouts.sidebar', static function (\Illuminate\View\View $view) {
             $settings = CachingService::getSystemSettings('company_logo');
-            $view->with('company_logo', $settings ?? '');
+            $pendingServices = [
+                'car_inspection' => Schema::hasTable('car_inspection_requests')
+                    && CarInspectionRequest::where('status', CarInspectionRequest::STATUS_PENDING)->exists(),
+                'sell_for_me' => Schema::hasTable('sell_for_me_requests')
+                    && SellForMeRequest::where('status', SellForMeRequest::STATUS_PENDING)->exists(),
+                'auction_sheet_verification' => Schema::hasTable('auction_sheet_verification_requests')
+                    && AuctionSheetVerificationRequest::where('status', AuctionSheetVerificationRequest::STATUS_PENDING)->exists(),
+                'car_registration' => Schema::hasTable('car_registration_requests')
+                    && CarRegistrationRequest::where('status', CarRegistrationRequest::STATUS_PENDING)->exists(),
+                'car_ownership' => Schema::hasTable('car_ownership_requests')
+                    && CarOwnershipRequest::where('status', CarOwnershipRequest::STATUS_PENDING)->exists(),
+                'car_finance' => Schema::hasTable('car_finance_requests')
+                    && CarFinanceRequest::where('status', CarFinanceRequest::STATUS_PENDING)->exists(),
+            ];
+
+            $view->with([
+                'company_logo' => $settings ?? '',
+                'pendingServices' => $pendingServices,
+            ]);
         });
 
         View::composer('layouts.main', static function (\Illuminate\View\View $view) {
