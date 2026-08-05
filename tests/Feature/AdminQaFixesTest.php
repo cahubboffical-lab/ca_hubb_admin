@@ -39,6 +39,13 @@ class AdminQaFixesTest extends TestCase
         $this->assertSoftDeleted('packages', ['id' => $package->id]);
         self::assertNull(Package::find($package->id));
         self::assertNotNull(Package::withTrashed()->find($package->id));
+        self::assertFalse(
+            Package::query()
+                ->whereNull('packages.deleted_at')
+                ->whereKey($package->id)
+                ->exists(),
+            'Soft-deleted packages must be excluded from the mobile package query.'
+        );
 
         $response = $this->actingAs($admin)
             ->getJson(route('package.show', 1))

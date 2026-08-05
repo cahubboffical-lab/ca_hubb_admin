@@ -365,7 +365,7 @@ class ItemController extends Controller
             'latitude' => 'nullable',
             'longitude' => 'nullable',
             'address' => 'nullable',
-            'contact' => 'nullable',
+            'contact' => ['required', 'regex:/^[0-9]{11}$/'],
             'image' => 'nullable|image|mimes:jpeg,jpg,png|max:7168',
             'custom_fields' => 'nullable',
             'custom_field_files' => 'nullable|array',
@@ -375,6 +375,8 @@ class ItemController extends Controller
             'admin_edit_reason' => 'required|string|max:1000',
             'currency_id' => 'nullable|exists:currencies,id',
         ], [
+            'contact.required' => 'The phone number is required.',
+            'contact.regex' => 'The phone number must contain exactly 11 digits.',
             'image.image' => 'The main image is invalid or cannot be processed. Please upload a valid JPG or PNG image.',
             'gallery_images.*.image' => 'One of the gallery images is invalid or cannot be processed. Please upload valid JPG or PNG images.',
         ]);
@@ -713,7 +715,7 @@ class ItemController extends Controller
             'latitude' => 'required',
             'longitude' => 'required',
             'address' => 'nullable',
-            'contact' => 'nullable',
+            'contact' => ['required', 'regex:/^[0-9]{11}$/'],
             'image' => 'required|image|mimes:jpeg,jpg,png|max:7168',
             'custom_fields' => 'nullable',
             'custom_field_files' => 'nullable|array',
@@ -724,6 +726,8 @@ class ItemController extends Controller
             'category_id' => 'required|integer',
             'currency_id' => 'nullable|integer',
         ], [
+            'contact.required' => 'The phone number is required.',
+            'contact.regex' => 'The phone number must contain exactly 11 digits.',
             'image.image' => 'The main image is invalid or cannot be processed. Please upload a valid JPG or PNG image.',
             'gallery_images.*.image' => 'One of the gallery images is invalid or cannot be processed. Please upload valid JPG or PNG images.',
         ]);

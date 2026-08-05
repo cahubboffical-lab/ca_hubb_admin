@@ -1859,6 +1859,23 @@ a.ui-button:active,
     vertical-align: middle;
 }
 
+/* Keep Bootstrap Table's column chooser independent from short table bodies. */
+.table-responsive.bootstrap-table-responsive,
+.table-responsive:has(> .bootstrap-table) {
+    overflow: visible;
+}
+
+.table-responsive.bootstrap-table-responsive .fixed-table-body,
+.table-responsive:has(> .bootstrap-table) .fixed-table-body {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.bootstrap-table .fixed-table-toolbar .columns .dropdown-menu {
+    max-height: none !important;
+    overflow: visible !important;
+}
+
 
 
         

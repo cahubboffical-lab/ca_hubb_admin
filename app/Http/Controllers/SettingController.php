@@ -100,8 +100,8 @@ class SettingController extends Controller
         $validator = Validator::make($request->all(), [
             'company_name' => 'nullable',
             'company_email' => 'nullable',
-            'company_tel1' => 'nullable',
-            'company_tel2' => 'nullable',
+            'company_tel1' => ['sometimes', 'required', 'regex:/^[0-9]{11}$/'],
+            'company_tel2' => ['sometimes', 'nullable', 'regex:/^[0-9]{11}$/'],
             'company_address' => 'nullable',
             'default_language' => 'nullable',
             'currency_symbol' => 'nullable',
@@ -156,6 +156,10 @@ class SettingController extends Controller
             'currency_iso_code' => 'nullable|string',
             'free_ad_unlimited'     => 'sometimes|nullable|boolean',
             'free_ad_duration_days' => 'sometimes|nullable|integer|min:1|required_if:free_ad_unlimited,0',
+        ], [
+            'company_tel1.required' => __('Contact Number 1 is required.'),
+            'company_tel1.regex' => __('Contact Number 1 must contain exactly 11 digits.'),
+            'company_tel2.regex' => __('Contact Number 2 must contain exactly 11 digits.'),
         ]);
         if (
             $request->has('mobile_authentication') && $request->mobile_authentication == 0 &&

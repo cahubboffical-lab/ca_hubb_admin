@@ -6,11 +6,49 @@ use App\Models\City;
 use App\Models\News;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 use Tests\TestCase;
 
 class NewsApiPaginationTest extends TestCase
 {
     use DatabaseTransactions;
+
+    public function test_multiple_news_items_can_belong_to_the_same_city(): void
+    {
+        Storage::fake('public');
+        $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
+
+        $city = City::query()->firstOrFail();
+        $admin = User::query()->firstOrFail();
+        $permission = Permission::query()->firstOrCreate([
+            'name' => 'news-create',
+            'guard_name' => 'web',
+        ]);
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        $admin->givePermissionTo($permission);
+        $this->actingAs($admin);
+
+        News::query()->where('city_id', $city->id)->delete();
+        News::create([
+            'city_id' => $city->id,
+            'cover_image' => 'news/first-city-news.webp',
+            'english_html' => '<p>First English news</p>',
+            'urdu_html' => '<p>First Urdu news</p>',
+            'created_by' => $admin->id,
+        ]);
+
+        $this->post(route('news.store'), [
+            'city_id' => $city->id,
+            'cover_image' => UploadedFile::fake()->image('second-city-news.webp'),
+            'english_html' => '<p>Second English news</p>',
+            'urdu_html' => '<p>Second Urdu news</p>',
+        ])->assertRedirect(route('news.index'));
+
+        $this->assertSame(2, News::query()->where('city_id', $city->id)->count());
+    }
 
     public function test_news_list_is_paginated_ten_at_a_time(): void
     {

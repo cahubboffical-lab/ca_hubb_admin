@@ -3,6 +3,19 @@
 
 $(document).ready(function () {
 
+    function markBootstrapTableResponsiveContainer(table) {
+        $(table).closest('.bootstrap-table').parent('.table-responsive')
+            .addClass('bootstrap-table-responsive');
+    }
+
+    $('table[data-toggle="table"]').each(function () {
+        markBootstrapTableResponsiveContainer(this);
+    });
+
+    $(document).on('post-body.bs.table reset-view.bs.table', 'table', function () {
+        markBootstrapTableResponsiveContainer(this);
+    });
+
     /// START :: ACTIVE MENU CODE
     $(".menu a").each(function () {
         let pageUrl = window.location.href.split(/[?#]/)[0];
@@ -26,7 +39,7 @@ $(document).ready(function () {
     });
     /// END :: ACTIVE MENU CODE
     if ($('.select2').length > 0) {
-        $('.select2').select2();
+        $('.select2').not('.parent-category-field .select2').select2();
     }
 
     $('.select2-selection__clear').hide();
@@ -980,12 +993,50 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 $(document).ready(function () {
-    $('#p_category').select2({
-        placeholder: "{{ __('Select Category') }}",
+    const parentCategory = $('.parent-category-field #p_category');
+    const parentCategoryField = parentCategory.closest('.parent-category-field');
+
+    if (!parentCategory.length) {
+        return;
+    }
+
+    parentCategory.select2({
+        placeholder: parentCategory.data('placeholder') || 'Select Category',
         allowClear: true,
-        width: '100%'
+        width: '100%',
+        dropdownParent: parentCategoryField
     });
 });
+
+function validateElevenDigitPhone(input) {
+    const isEmptyAndOptional = input.value === '' && !input.required;
+    const isValid = isEmptyAndOptional || /^[0-9]{11}$/.test(input.value);
+    const message = input.dataset.parsleyPatternMessage || 'Phone Number must contain exactly 11 digits.';
+
+    input.setCustomValidity(isValid ? '' : message);
+    return isValid;
+}
+
+$(document).on('input', '.eleven-digit-phone', function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 11);
+    validateElevenDigitPhone(this);
+});
+
+document.addEventListener('submit', function (event) {
+    const phoneInputs = event.target.querySelectorAll('.eleven-digit-phone');
+    const invalidPhone = Array.from(phoneInputs).find(function (input) {
+        return !validateElevenDigitPhone(input);
+    });
+
+    if (!invalidPhone) {
+        return;
+    }
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    invalidPhone.reportValidity();
+    invalidPhone.focus();
+}, true);
 $(document).ready(function () {
     function toggleTwilioSettings() {
         let otpServicesProviderValue = $("#otp-services-provider").val();

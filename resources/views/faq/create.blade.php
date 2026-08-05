@@ -4,11 +4,32 @@
 @endsection
 @section('css')
     <style>
-        .faq-page, .faq-page .row, .faq-page .card, .faq-page .card-body, .faq-page .bootstrap-table {
+        .faq-page, .faq-page .card, .faq-page .card-body, .faq-page .bootstrap-table,
+        .faq-page .fixed-table-container, .faq-page .fixed-table-body {
             min-width: 0;
             max-width: 100%;
         }
-        .faq-page .fixed-table-container { max-width: 100%; overflow-x: clip; }
+        .faq-page {
+            overflow-x: clip;
+        }
+        .faq-page > .row {
+            width: 100%;
+            margin-right: 0;
+            margin-left: 0;
+        }
+        .faq-page > .row > form {
+            width: 100%;
+            padding-right: 0;
+            padding-left: 0;
+        }
+        .faq-page .fixed-table-container,
+        .faq-page .fixed-table-body {
+            overflow-x: hidden;
+        }
+        .faq-page table {
+            width: 100% !important;
+            table-layout: fixed;
+        }
         .faq-page td { white-space: normal !important; overflow-wrap: anywhere; }
     </style>
 @endsection

@@ -387,7 +387,9 @@ class ApiController extends Controller
             ResponseService::validationError($validator->errors()->first());
         }
         try {
-            $packages = Package::with(['translations', 'categories', 'package_categories'])->where('status', 1);
+            $packages = Package::with(['translations', 'categories', 'package_categories'])
+                ->whereNull('packages.deleted_at')
+                ->where('status', 1);
 
             if (Auth::check()) {
                 $packages = $packages->with('user_purchased_packages', function ($q) {

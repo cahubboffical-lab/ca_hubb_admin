@@ -38,11 +38,19 @@ class UserPurchasedPackage extends Model {
     }
 
     public function scopeOnlyActive($query) {
-        return $query->where('user_id', Auth::user()->id)->whereDate('start_date', '<=', date('Y-m-d'))->where(function ($q) {
-            $q->whereDate('end_date', '>', date('Y-m-d'))->orWhereNull('end_date');
-        })->where(function ($q) {
-            $q->whereColumn('used_limit', '<', 'total_limit')->orWhereNull('total_limit');
-        })->orderBy('end_date', 'asc');
+        return $query
+            // The relationship includes archived packages for admin purchase history,
+            // but archived packages must never remain active in the mobile app.
+            ->whereHas('package', function ($packageQuery) {
+                $packageQuery->whereNull('packages.deleted_at');
+            })
+            ->where('user_id', Auth::user()->id)
+            ->whereDate('start_date', '<=', date('Y-m-d'))
+            ->where(function ($q) {
+                $q->whereDate('end_date', '>', date('Y-m-d'))->orWhereNull('end_date');
+            })->where(function ($q) {
+                $q->whereColumn('used_limit', '<', 'total_limit')->orWhereNull('total_limit');
+            })->orderBy('end_date', 'asc');
     }
 
     public function getRemainingDaysAttribute() {

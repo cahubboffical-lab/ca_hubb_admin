@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Throwable;
 
 class NewsController extends Controller
@@ -44,7 +43,7 @@ class NewsController extends Controller
         ResponseService::noPermissionThenSendJson('news-create');
 
         $validated = $request->validate([
-            'city_id' => ['required', 'integer', 'exists:cities,id', 'unique:news,city_id'],
+            'city_id' => ['required', 'integer', 'exists:cities,id'],
             'cover_image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:7168'],
             'english_html' => ['required', 'string'],
             'urdu_html' => ['required', 'string'],
@@ -134,7 +133,7 @@ class NewsController extends Controller
         $news = News::findOrFail($id);
 
         $validated = $request->validate([
-            'city_id' => ['required', 'integer', 'exists:cities,id', Rule::unique('news', 'city_id')->ignore($news->id)],
+            'city_id' => ['required', 'integer', 'exists:cities,id'],
             'cover_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:7168'],
             'english_html' => ['required', 'string'],
             'urdu_html' => ['required', 'string'],

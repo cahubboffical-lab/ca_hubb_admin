@@ -3,6 +3,37 @@
     {{__("Create Categories")}}
 @endsection
 
+@section('css')
+    <style>
+        .category-form-page,
+        .category-form-page > .row,
+        .category-form-page > .row > form,
+        .category-form-page .card,
+        .parent-category-field {
+            min-width: 0;
+            max-width: 100%;
+        }
+        .category-form-page > .row {
+            width: 100%;
+            margin-right: 0;
+            margin-left: 0;
+        }
+        .category-form-page > .row > form {
+            width: 100%;
+            padding-right: 0;
+            padding-left: 0;
+        }
+        .parent-category-field {
+            position: relative;
+        }
+        .parent-category-field .select2-container,
+        .parent-category-field .select2-dropdown {
+            width: 100% !important;
+            max-width: 100%;
+        }
+    </style>
+@endsection
+
 @section('page-title')
     <div class="page-title">
         <div class="row">
@@ -14,7 +45,7 @@
 @endsection
 
 @section('content')
-    <section class="section">
+    <section class="section category-form-page">
         <div class="buttons">
             <a class="btn btn-primary" href="{{ route('category.index') }}">< {{__("Back to All Categories")}} </a>
         </div>
@@ -72,7 +103,7 @@
                                                 </div>
 
                                                 <div class="col-md-6">
-                                                    <div class="col-md-12 form-group">
+                                                    <div class="col-md-12 form-group parent-category-field">
                                                         <label for="p_category" class="form-label">{{ __('Parent Category') }}</label>
                                                         <select name="parent_category_id" id="p_category" class="form-select form-control select2" data-placeholder="{{__('Select Category')}}">
                                                             <option value="">{{__('Select a Category')}}</option>
