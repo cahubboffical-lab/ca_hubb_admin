@@ -5,6 +5,7 @@
 
 @section('css')
     <style>
+        html, body, #app, #main, #main-content,
         .category-form-page,
         .category-form-page > .row,
         .category-form-page > .row > form,
@@ -12,6 +13,10 @@
         .parent-category-field {
             min-width: 0;
             max-width: 100%;
+            box-sizing: border-box;
+        }
+        html, body, #app, #main, #main-content, .category-form-page {
+            overflow-x: hidden;
         }
         .category-form-page > .row {
             width: 100%;
@@ -30,6 +35,16 @@
         .parent-category-field .select2-dropdown {
             width: 100% !important;
             max-width: 100%;
+        }
+        .select2-container--open .select2-dropdown {
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+        .select2-container--open .select2-results__option {
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     </style>
 @endsection

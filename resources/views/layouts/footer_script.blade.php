@@ -59,7 +59,7 @@
 
 {{-- Custom JS --}}
 <script type="text/javascript" src="{{ asset('assets/js/custom/common.js') }}"></script>
-<script type="text/javascript" src="{{ asset('assets/js/custom/custom.js') }}"></script>
+<script type="text/javascript" src="{{ asset('assets/js/custom/custom.js') }}?v={{ @filemtime(public_path('assets/js/custom/custom.js')) ?: '1' }}"></script>
 <script type="text/javascript" src="{{ asset('assets/js/custom/function.js') }}"></script>
 <script type="text/javascript" src="{{ asset('assets/js/custom/bootstrap-table/formatter.js') }}"></script>
 <script type="text/javascript" src="{{ asset('assets/js/custom/bootstrap-table/queryParams.js') }}"></script>

@@ -4,13 +4,15 @@
 @endsection
 @section('css')
     <style>
+        html, body, #app, #main, #main-content,
         .faq-page, .faq-page .card, .faq-page .card-body, .faq-page .bootstrap-table,
         .faq-page .fixed-table-container, .faq-page .fixed-table-body {
             min-width: 0;
             max-width: 100%;
+            box-sizing: border-box;
         }
-        .faq-page {
-            overflow-x: clip;
+        html, body, #app, #main, #main-content, .faq-page {
+            overflow-x: hidden;
         }
         .faq-page > .row {
             width: 100%;
@@ -83,7 +85,7 @@
                                                         </div>
                                                     @endforeach
                                                 </div>
-                                    <div class="col-md-12 m-2 text-end">
+                                    <div class="col-md-12 mt-2 px-0 text-end">
                                         <input type="submit" class="btn btn-primary" value="{{__("Create")}}">
                                     </div>
                                 </div>

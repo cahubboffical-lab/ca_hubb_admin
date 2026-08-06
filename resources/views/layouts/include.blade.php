@@ -1,19 +1,19 @@
 @php
     // $lang = Session::get('language');
     // dd($lang);
-    
+    $customCssVersion = @filemtime(public_path('assets/css/custom.css')) ?: '1';
 @endphp
 
 @if (empty($lang) || !$lang->rtl)
     {{-- NON RTL CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/css/main/app.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/pages/otherpages.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}?v={{ $customCssVersion }}" />
 @else
     {{-- RTL CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/css/main/rtl.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/pages/otherpages_rtl.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}?v={{ $customCssVersion }}" />
 @endif
 {{-- Bootstrap Switch --}}
 <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-switch-button.min.css') }}">

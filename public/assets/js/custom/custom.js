@@ -994,7 +994,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 $(document).ready(function () {
     const parentCategory = $('.parent-category-field #p_category');
-    const parentCategoryField = parentCategory.closest('.parent-category-field');
 
     if (!parentCategory.length) {
         return;
@@ -1004,7 +1003,7 @@ $(document).ready(function () {
         placeholder: parentCategory.data('placeholder') || 'Select Category',
         allowClear: true,
         width: '100%',
-        dropdownParent: parentCategoryField
+        dropdownParent: $('body')
     });
 });
 

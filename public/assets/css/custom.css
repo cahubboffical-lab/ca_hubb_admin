@@ -1871,9 +1871,18 @@ a.ui-button:active,
     overflow-x: auto;
 }
 
-.bootstrap-table .fixed-table-toolbar .columns .dropdown-menu {
-    max-height: none !important;
+.bootstrap-table,
+.bootstrap-table .fixed-table-toolbar,
+.bootstrap-table .fixed-table-toolbar .columns,
+.bootstrap-table .fixed-table-toolbar .keep-open {
     overflow: visible !important;
+}
+
+.bootstrap-table .fixed-table-toolbar .columns .dropdown-menu,
+.bootstrap-table .fixed-table-toolbar .keep-open .dropdown-menu {
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
 }
 
 
