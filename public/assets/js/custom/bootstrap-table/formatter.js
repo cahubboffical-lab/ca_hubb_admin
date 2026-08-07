@@ -11,14 +11,17 @@ function imageFormatter(value) {
 function galleryImageFormatter(value) {
     if (Array.isArray(value) && value.length) {
         const firstImage = value[0];
-        let html = '<div class="gallery d-inline-flex align-items-center flex-nowrap" style="height: 60px;">';
-        html += '<a href="' + firstImage.image + '" class="d-inline-block"><img class="rounded shadow" alt="" src="' + firstImage.image + '" width="55" height="55" style="width:55px;height:55px;object-fit:cover;" onerror="onErrorImage(event)"></a>';
-        $.each(value.slice(1), function (index, data) {
+        let html = '<div class="gallery advertisement-gallery">';
+        html += '<a href="' + firstImage.image + '" class="advertisement-gallery__thumbnail"><img class="rounded shadow" alt="" src="' + firstImage.image + '" width="55" height="55" onerror="onErrorImage(event)"></a>';
+
+        if (value.length > 1) {
+            html += '<a href="' + value[1].image + '" class="advertisement-gallery__more" aria-label="View ' + (value.length - 1) + ' more images">+' + (value.length - 1) + '</a>';
+        }
+
+        $.each(value.slice(2), function (index, data) {
             html += '<a href="' + data.image + '" class="d-none" aria-hidden="true"></a>';
         });
-        if (value.length > 1) {
-            html += '<span class="badge bg-secondary ms-1">+' + (value.length - 1) + '</span>';
-        }
+
         html += "</div>"
         return html;
     } else {

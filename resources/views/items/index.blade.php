@@ -28,6 +28,48 @@
         .advertisement-page #table_list .btn.icon {
             margin: .25rem;
         }
+
+        .advertisement-page .advertisement-gallery {
+            display: inline-flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 4px;
+            height: 55px;
+            vertical-align: middle;
+        }
+
+        .advertisement-page .advertisement-gallery__thumbnail,
+        .advertisement-page .advertisement-gallery__more {
+            display: inline-flex;
+            width: 55px;
+            height: 55px;
+            flex: 0 0 55px;
+            overflow: hidden;
+            border-radius: .25rem;
+        }
+
+        .advertisement-page .advertisement-gallery__thumbnail img {
+            width: 55px !important;
+            height: 55px !important;
+            object-fit: cover;
+        }
+
+        .advertisement-page .advertisement-gallery__more {
+            align-items: center;
+            justify-content: center;
+            background: var(--bs-secondary);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1;
+            text-decoration: none;
+        }
+
+        .advertisement-page .advertisement-gallery__more:hover,
+        .advertisement-page .advertisement-gallery__more:focus {
+            color: #fff;
+            filter: brightness(.9);
+        }
     </style>
 @endsection
 
@@ -84,7 +126,7 @@
                         <div id="filters" class="row g-2 align-items-end mb-3">
                             <div class="col-12 col-md-2">
                                 <label for="filter">{{ __('Status') }}</label>
-                                <select class="form-control" id="filter" data-field="status">
+                                <select class="form-select" id="filter" data-field="status">
                                     <option value="">{{ __('All') }}</option>
                                     <option value="approved">{{ __('Approved') }}</option>
                                     <option value="review">{{ __('Under Review') }}</option>
@@ -98,7 +140,7 @@
                             </div>
                             <div class="col-12 col-md-3">
                                 <label for="filter-featured-premium">{{ __('Featured') }}</label>
-                                <select class="form-control bootstrap-table-filter-control-featured_status"
+                                <select class="form-select bootstrap-table-filter-control-featured_status"
                                     id="filter_featured_premium">
                                     <option value="">{{ __('All') }}</option>
                                     <option value="featured">{{ __('Featured') }}</option>
@@ -108,7 +150,7 @@
                             <div class="col-12 col-md-5">
                                 <label for="p_category">{{ __('Category') }}</label>
                                 <select name="category_id" id="p_category"
-                                    class="form-control bootstrap-table-filter-control-category" aria-label="category"
+                                    class="form-select bootstrap-table-filter-control-category" aria-label="category"
                                     data-placeholder="{{ __('All') }}">
                                     <option value="">{{ __('All') }}</option>
                                     @include('category.dropdowntree', ['categories' => $categories])
@@ -116,7 +158,7 @@
                             </div>
                             <div class="col-12 col-md-2">
                                 <label for="filter_country">{{ __('Country') }}</label>
-                                <select class="form-control bootstrap-table-filter-control-country"
+                                <select class="form-select bootstrap-table-filter-control-country"
                                     id="filter_country_item_test">
                                     <option value="">{{ __('All') }}</option>
                                     @foreach ($countries as $country)
@@ -126,7 +168,7 @@
                             </div>
                             <div class="col-12 col-md-2">
                                 <label for="filter_state">{{ __('State') }}</label>
-                                <select name="state_id" class="form-control bootstrap-table-filter-control-state"
+                                <select name="state_id" class="form-select bootstrap-table-filter-control-state"
                                     id="filter_state_item">
                                     <option value="">{{ __('All') }}</option>
                                     @foreach ($states as $state)
@@ -136,7 +178,7 @@
                             </div>
                             <div class="col-12 col-md-2">
                                 <label for="filter_city">{{ __('City') }}</label>
-                                <select name="city_id" class="form-control bootstrap-table-filter-control-city"
+                                <select name="city_id" class="form-select bootstrap-table-filter-control-city"
                                     id="filter_city_item">
                                     <option value="">{{ __('All') }}</option>
                                     @foreach ($cities as $city)
