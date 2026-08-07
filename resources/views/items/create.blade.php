@@ -100,10 +100,11 @@
 
                                 <div class="col-6 mb-3">
                                     <label>{{ __('Phone Number') }}</label>
-                                    <input type="text" name="contact" id="contact-input"
+                                    <input type="tel" name="contact" id="contact-input"
                                         value="{{ old('contact', auth()->user()->phone ?? '') }}"
                                         class="form-control eleven-digit-phone" inputmode="numeric"
                                         autocomplete="tel" pattern="[0-9]{11}" minlength="11" maxlength="11"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)"
                                         data-parsley-pattern="^[0-9]{11}$"
                                         data-parsley-pattern-message="{{ __('Phone Number must contain exactly 11 digits.') }}"
                                         required>

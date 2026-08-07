@@ -46,9 +46,10 @@
                                 <div class="col-sm-12 form-group mandatory">
                                     <label for="company_tel1"
                                         class="col-sm-12 col-md-6 form-label mt-1">{{ __('Contact Number') . ' 1' }}</label>
-                                    <input id="company_tel1" name="company_tel1" type="text"
+                                    <input id="company_tel1" name="company_tel1" type="tel"
                                         class="form-control eleven-digit-phone" inputmode="numeric"
                                         autocomplete="tel" pattern="[0-9]{11}" minlength="11" maxlength="11"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)"
                                         data-parsley-pattern="^[0-9]{11}$"
                                         data-parsley-pattern-message="{{ __('Contact Number 1 must contain exactly 11 digits.') }}"
                                         placeholder="{{ __('Contact Number') . ' 1' }}"
@@ -58,9 +59,10 @@
                                 <div class="col-sm-12">
                                     <label for="company_tel2"
                                         class="col-sm-12 col-md-6 form-label mt-1">{{ __('Contact Number') . ' 2' }}</label>
-                                    <input id="company_tel2" name="company_tel2" type="text"
+                                    <input id="company_tel2" name="company_tel2" type="tel"
                                         class="form-control eleven-digit-phone" inputmode="numeric"
                                         autocomplete="tel" pattern="[0-9]{11}" minlength="11" maxlength="11"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11)"
                                         data-parsley-pattern="^[0-9]{11}$"
                                         data-parsley-pattern-message="{{ __('Contact Number 2 must contain exactly 11 digits.') }}"
                                         placeholder="{{ __('Contact Number') . ' 2' }}"

@@ -1016,6 +1016,14 @@ function validateElevenDigitPhone(input) {
     return isValid;
 }
 
+$(document).on('beforeinput', '.eleven-digit-phone', function (event) {
+    const insertedText = event.originalEvent && event.originalEvent.data;
+
+    if (insertedText && /\D/.test(insertedText)) {
+        event.preventDefault();
+    }
+});
+
 $(document).on('input', '.eleven-digit-phone', function () {
     this.value = this.value.replace(/\D/g, '').slice(0, 11);
     validateElevenDigitPhone(this);
