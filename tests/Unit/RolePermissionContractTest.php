@@ -43,6 +43,38 @@ class RolePermissionContractTest extends TestCase
         self::assertStringNotContainsString("@canany(['item-list', 'item-create', 'item-update', 'item-delete'", $sidebar);
     }
 
+    public function test_news_permissions_are_provisioned_by_an_upgrade_migration(): void
+    {
+        $migration = file_get_contents(dirname(__DIR__, 2).'/database/migrations/2026_08_13_000001_add_news_permissions_to_role_management.php');
+
+        foreach (['news-list', 'news-create', 'news-update', 'news-delete'] as $permission) {
+            self::assertStringContainsString("'{$permission}'", $migration);
+        }
+    }
+
+    public function test_service_management_permissions_are_provisioned_by_an_upgrade_migration(): void
+    {
+        $migration = file_get_contents(dirname(__DIR__, 2).'/database/migrations/2026_08_13_000002_add_service_management_permissions_to_roles.php');
+        $permissions = [
+            'car-inspection-request-list',
+            'car-inspection-request-update',
+            'car-inspection-package-list',
+            'car-inspection-package-create',
+            'car-inspection-package-update',
+            'car-inspection-package-delete',
+            'sell-for-me-request-list',
+            'sell-for-me-request-update',
+            'sell-for-me-package-list',
+            'sell-for-me-package-create',
+            'sell-for-me-package-update',
+            'sell-for-me-package-delete',
+        ];
+
+        foreach ($permissions as $permission) {
+            self::assertStringContainsString("'{$permission}'", $migration);
+        }
+    }
+
     public function test_list_only_customer_view_does_not_render_mutation_controls(): void
     {
         $view = file_get_contents(dirname(__DIR__, 2).'/resources/views/customer/index.blade.php');

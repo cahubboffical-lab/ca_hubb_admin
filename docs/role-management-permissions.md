@@ -23,3 +23,5 @@ This document records the permission contract for the modules covered by the 12 
 - Customer package assignment and cancellation require `customer-update` on the server even if a request is submitted without the UI.
 - Advertisement navigation uses the current `advertisement-*` names, not the retired `item-*` aliases.
 - Request list and update permissions are intentionally separate for Car Inspection and Sell for Me.
+- News permissions are inserted by an upgrade migration, so they appear in Role Management on existing installations without rerunning seeders.
+- Car Inspection and Sell for Me request/package permissions are also inserted by an upgrade migration. Existing installations therefore receive their List and action options without rerunning seeders.
