@@ -42,11 +42,13 @@
                                 <th scope="col" data-field="type" data-sortable="true">{{ __('Type') }}</th>
                                 <th scope="col" data-field="address" data-sortable="true">{{ __('Address') }}</th>
                                 <th scope="col" data-field="items_count" data-sortable="true">{{ __('Total Post') }}</th>
-                                <th scope="col" data-field="status" data-formatter="statusSwitchFormatter" data-sortable="false">{{ __('Status') }}</th>
-                                 @can('customer-update')
-                                  <th scope="col" data-field="auto_approve_advertisement" data-formatter="autoApproveItemSwitchFormatter" data-sortable="false">{{ __('Auto Approve Advertisement') }}</th>
+                                @can('customer-update')
+                                    <th scope="col" data-field="status" data-formatter="statusSwitchFormatter" data-sortable="false">{{ __('Status') }}</th>
+                                    <th scope="col" data-field="auto_approve_advertisement" data-formatter="autoApproveItemSwitchFormatter" data-sortable="false">{{ __('Auto Approve Advertisement') }}</th>
+                                    <th scope="col" data-field="operate" data-escape="false" data-align="center" data-sortable="false" data-events="userEvents">{{ __('Action') }}</th>
+                                @else
+                                    <th scope="col" data-field="status" data-formatter="userStatusBadgeFormatter" data-sortable="false">{{ __('Status') }}</th>
                                 @endcan
-                                <th scope="col" data-field="operate" data-escape="false" data-align="center" data-sortable="false" data-events="userEvents">{{ __('Action') }}</th>
                             </tr>
                             </thead>
                         </table>
@@ -54,6 +56,7 @@
                 </div>
             </div>
         </div>
+        @can('customer-update')
         <div id="assignPackageModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1"
              aria-hidden="true">
             <div class="modal-dialog">
@@ -187,10 +190,12 @@
                 </div>
             </div>
         </div>
+        @endcan
 
     </section>
 @endsection
 @section('js')
+    @can('customer-update')
     <script>
         function assignApprovalSuccess() {
             $('#assignPackageModal').modal('hide');
@@ -356,4 +361,5 @@
         });
 
     </script>
+    @endcan
 @endsection

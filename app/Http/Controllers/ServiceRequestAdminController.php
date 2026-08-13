@@ -16,18 +16,20 @@ class ServiceRequestAdminController extends Controller
     private const SECTIONS = [
         'car-inspection' => [
             'model' => CarInspectionRequest::class,
-            'permission' => 'car-inspection-request-list',
+            'list_permission' => 'car-inspection-request-list',
+            'update_permission' => 'car-inspection-request-update',
         ],
         'sell-for-me' => [
             'model' => SellForMeRequest::class,
-            'permission' => 'sell-for-me-request-list',
+            'list_permission' => 'sell-for-me-request-list',
+            'update_permission' => 'sell-for-me-request-update',
         ],
     ];
 
     public function table(Request $request, string $section)
     {
         $config = $this->sectionConfig($section);
-        ResponseService::noPermissionThenSendJson($config['permission']);
+        ResponseService::noPermissionThenSendJson($config['list_permission']);
 
         $validated = $request->validate([
             'status' => ['nullable', Rule::in(ServiceRequest::statuses())],
@@ -51,17 +53,18 @@ class ServiceRequestAdminController extends Controller
 
         $total = (clone $query)->count();
         $requests = $query->orderBy($sort, $order)->skip($offset)->take($limit)->get();
+        $canUpdate = $request->user()->can($config['update_permission']);
 
         return response()->json([
             'total' => $total,
-            'rows' => $requests->map(fn (ServiceRequest $serviceRequest) => $this->tableRow($section, $serviceRequest))->values(),
+            'rows' => $requests->map(fn (ServiceRequest $serviceRequest) => $this->tableRow($section, $serviceRequest, $canUpdate))->values(),
         ]);
     }
 
     public function show(string $section, int $requestId)
     {
         $config = $this->sectionConfig($section);
-        ResponseService::noPermissionThenSendJson($config['permission']);
+        ResponseService::noPermissionThenSendJson($config['list_permission']);
         $serviceRequest = $this->findRequest($config['model'], $requestId);
 
         $serviceRequest->load(['user:id,name,email,mobile', 'servicePackage:id,name,price,type', 'city:id,name', 'carModel:id,name,brand_name']);
@@ -75,7 +78,7 @@ class ServiceRequestAdminController extends Controller
     public function updateStatus(Request $request, string $section, int $requestId)
     {
         $config = $this->sectionConfig($section);
-        ResponseService::noPermissionThenSendJson($config['permission']);
+        ResponseService::noPermissionThenSendJson($config['update_permission']);
         $serviceRequest = $this->findRequest($config['model'], $requestId);
 
         $request->merge(['admin_notes' => trim((string) $request->input('admin_notes'))]);
@@ -143,7 +146,7 @@ class ServiceRequestAdminController extends Controller
         });
     }
 
-    private function tableRow(string $section, ServiceRequest $serviceRequest): array
+    private function tableRow(string $section, ServiceRequest $serviceRequest, bool $canUpdate): array
     {
         return [
             'id' => $serviceRequest->id,
@@ -156,11 +159,11 @@ class ServiceRequestAdminController extends Controller
             'visit_date' => $serviceRequest->visit_date?->format('Y-m-d'),
             'visit_time' => e(substr((string) $serviceRequest->visit_start_time, 0, 5).' - '.substr((string) $serviceRequest->visit_end_time, 0, 5)),
             'created_at' => $serviceRequest->created_at?->format('Y-m-d H:i'),
-            'operate' => $this->renderActions($section, $serviceRequest),
+            'operate' => $this->renderActions($section, $serviceRequest, $canUpdate),
         ];
     }
 
-    private function renderActions(string $section, ServiceRequest $serviceRequest): string
+    private function renderActions(string $section, ServiceRequest $serviceRequest, bool $canUpdate): string
     {
         $nextStatus = $serviceRequest->nextStatus();
         $viewUrl = route('service-requests.show', ['section' => $section, 'requestId' => $serviceRequest->id]);
@@ -181,7 +184,7 @@ class ServiceRequestAdminController extends Controller
             .'<a class="btn btn-sm btn-success" href="'.e($whatsAppUrl).'" target="_blank" rel="noopener noreferrer">'
             .'<i class="fab fa-whatsapp me-1"></i>'.e(__('WhatsApp')).'</a>';
 
-        if ($nextStatus !== null) {
+        if ($canUpdate && $nextStatus !== null) {
             $statusIcon = $nextStatus === ServiceRequest::STATUS_COMPLETED ? 'fas fa-check-circle' : 'fas fa-play-circle';
             $statusClass = $nextStatus === ServiceRequest::STATUS_COMPLETED ? 'btn-success' : 'btn-primary';
             $actions .= '<button type="button" class="btn btn-sm '.$statusClass.' update-request-status"'
@@ -189,7 +192,7 @@ class ServiceRequestAdminController extends Controller
                 .'<i class="'.$statusIcon.' me-1"></i>'.e(__('Mark as :status', ['status' => $this->statusLabel($nextStatus)])).'</button>';
         }
 
-        if ($serviceRequest->canCancel()) {
+        if ($canUpdate && $serviceRequest->canCancel()) {
             $actions .= '<button type="button" class="btn btn-sm btn-outline-danger update-request-status"'
                 .' data-url="'.e($statusUrl).'" data-status="'.e(ServiceRequest::STATUS_CANCELED).'" data-label="'.e(__('Canceled')).'">'
                 .'<i class="fas fa-times-circle me-1"></i>'.e(__('Cancel Request')).'</button>';

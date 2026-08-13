@@ -14,14 +14,18 @@ use App\Services\NotificationService;
 use App\Services\ResponseService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Throwable;
 
 class CustomersController extends Controller {
     public function index() {
-        ResponseService::noAnyPermissionThenRedirect(['customer-list', 'customer-update']);
-        $packages = Package::all()->where('status', 1);
+        ResponseService::noPermissionThenRedirect('customer-list');
+        $packages = Auth::user()->can('customer-update')
+            ? Package::query()->where('status', 1)->get()
+            : collect();
         $settings = Setting::whereIn('name', ['currency_symbol', 'currency_symbol_position','free_ad_listing'])
         ->pluck('value', 'name');
         $currency_symbol = $settings['currency_symbol'] ?? '';
@@ -49,7 +53,11 @@ class CustomersController extends Controller {
     }
 
     public function show(Request $request) {
-        ResponseService::noAnyPermissionThenSendJson(['customer-list','notification-list', 'notification-create', 'notification-update', 'notification-delete']);
+        if ($request->boolean('notification_list')) {
+            ResponseService::noAnyPermissionThenSendJson(['notification-list', 'notification-create', 'notification-update', 'notification-delete']);
+        } else {
+            ResponseService::noPermissionThenSendJson('customer-list');
+        }
         $offset = $request->offset ?? 0;
         $limit = $request->limit ?? 10;
         $sort = $request->sort ?? 'id';
@@ -91,28 +99,31 @@ class CustomersController extends Controller {
                 }
             }
 
-            $operate = BootstrapTableService::button(
-                'fa fa-cart-plus',
-                route('customer.assign.package', $row->id),
-                ['btn-outline-danger', 'assign_package'],
-                [
-                    'title'          => __("Assign Package"),
-                    "data-bs-target" => "#assignPackageModal",
-                    "data-bs-toggle" => "modal"
-                ]
-            );
-            
-            $operate .= BootstrapTableService::button(
-                'fa  fa-minus-circle',
-                '#',
-                ['btn-outline-primary', 'manage_packages', 'ms-1'],
-                [
-                    'title'          => __("cancel Packages"),
-                    "data-bs-target" => "#managePackagesModal",
-                    "data-bs-toggle" => "modal",
-                    "data-user-id"   => $row->id
-                ]
-            );
+            $operate = '';
+            if (Auth::user()->can('customer-update')) {
+                $operate = BootstrapTableService::button(
+                    'fa fa-cart-plus',
+                    route('customer.assign.package', $row->id),
+                    ['btn-outline-danger', 'assign_package'],
+                    [
+                        'title'          => __("Assign Package"),
+                        "data-bs-target" => "#assignPackageModal",
+                        "data-bs-toggle" => "modal"
+                    ]
+                );
+
+                $operate .= BootstrapTableService::button(
+                    'fa fa-minus-circle',
+                    '#',
+                    ['btn-outline-primary', 'manage_packages', 'ms-1'],
+                    [
+                        'title'          => __("Manage Packages"),
+                        "data-bs-target" => "#managePackagesModal",
+                        "data-bs-toggle" => "modal",
+                        "data-user-id"   => $row->id
+                    ]
+                );
+            }
             
             $tempRow['operate'] = $operate;
             $rows[] = $tempRow;
@@ -123,8 +134,15 @@ class CustomersController extends Controller {
     }
 
     public function assignPackage(Request $request) {
+        ResponseService::noPermissionThenSendJson('customer-update');
         $validator = Validator::make($request->all(), [
-            'package_id'      => 'required',
+            'user_id'         => 'required|exists:users,id',
+            'package_id'      => [
+                'required',
+                Rule::exists('packages', 'id')->where(static fn ($query) => $query
+                    ->where('status', 1)
+                    ->whereNull('deleted_at')),
+            ],
             'payment_gateway' => 'required|in:cash,cheque',
         ]);
         if ($validator->fails()) {
@@ -132,7 +150,6 @@ class CustomersController extends Controller {
         }
         try {
             DB::beginTransaction();
-            ResponseService::noPermissionThenSendJson('customer-list');
             $user = User::find($request->user_id);
             if (empty($user)) {
                 ResponseService::errorResponse('User is not Active');
@@ -188,12 +205,15 @@ class CustomersController extends Controller {
     }
 
     public function getActivePackages(Request $request) {
-        ResponseService::noPermissionThenSendJson('customer-list');
+        ResponseService::noPermissionThenSendJson('customer-update');
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+        ]);
+        if ($validator->fails()) {
+            ResponseService::validationError($validator->errors()->first());
+        }
         try {
             $userId = $request->user_id;
-            if (empty($userId)) {
-                ResponseService::errorResponse('User ID is required');
-            }
 
             $activePackages = UserPurchasedPackage::where('user_id', $userId)
                 ->whereDate('start_date', '<=', date('Y-m-d'))

@@ -32,11 +32,11 @@ class SystemUpgradeSeeder extends Seeder
                 'only' => ['list']
             ],
             'car-inspection-request'      => [
-                'only' => ['list']
+                'only' => ['list', 'update']
             ],
             'car-inspection-package'      => '*',
             'sell-for-me-request'         => [
-                'only' => ['list']
+                'only' => ['list', 'update']
             ],
             'sell-for-me-package'         => '*',
             'auction-sheet-verification-request' => [

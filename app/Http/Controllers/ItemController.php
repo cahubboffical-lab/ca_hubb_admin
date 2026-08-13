@@ -248,6 +248,8 @@ class ItemController extends Controller
 
     public function editForm($id)
     {
+        ResponseService::noPermissionThenRedirect('advertisement-update');
+
         $item = Item::with(
             'user:id,name,email,mobile,profile,country_code',
             'category.custom_fields', // get custom fields from category

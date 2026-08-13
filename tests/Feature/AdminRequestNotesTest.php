@@ -33,6 +33,7 @@ class AdminRequestNotesTest extends TestCase
         $admin = User::query()->firstOrFail();
         $permissions = [
             'car-inspection-request-list',
+            'car-inspection-request-update',
             'car-registration-request-update',
             'auction-sheet-verification-request-update',
             'car-finance-request-update',

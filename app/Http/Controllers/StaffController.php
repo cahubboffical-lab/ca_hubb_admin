@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Services\BootstrapTableService;
 use App\Services\ResponseService;
+use App\Services\StaffRoleService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -58,12 +59,12 @@ class StaffController extends Controller {
     }
 
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id, StaffRoleService $staffRoleService) {
         ResponseService::noPermissionThenRedirect('staff-update');
         $validator = Validator::make($request->all(), [
             'name'    => 'required',
             'email'   => 'required|email|unique:users,email,' . $id,
-            'role_id' => 'required'
+            'role_id' => 'required|integer|exists:roles,id'
         ]);
         if ($validator->fails()) {
             ResponseService::validationError($validator->errors()->first());
@@ -72,15 +73,10 @@ class StaffController extends Controller {
             DB::beginTransaction();
             $user = User::withTrashed()->findOrFail($id);
             $user->update([
-                ...$request->all()
+                'name' => $request->string('name')->toString(),
+                'email' => $request->string('email')->toString(),
             ]);
-
-            $oldRole = $user->roles;
-            if ($oldRole[0]->id !== $request->role_id) {
-                $newRole = Role::findById($request->role_id);
-                $user->removeRole($oldRole[0]);
-                $user->assignRole($newRole);
-            }
+            $staffRoleService->syncCustomRole($user, $request->integer('role_id'));
 
             DB::commit();
             ResponseService::successResponse('User Update Successfully');

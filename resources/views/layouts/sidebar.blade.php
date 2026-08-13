@@ -42,12 +42,12 @@
                     @endcanany
                 @endcanany
 
-                @canany(['item-list', 'item-create', 'item-update', 'item-delete', 'tip-list', 'tip-create',
+                @canany(['advertisement-list', 'advertisement-update', 'advertisement-delete', 'tip-list', 'tip-create',
                     'tip-update', 'tip-delete', 'startup-ad-list', 'startup-ad-create', 'startup-ad-update',
                     'startup-ad-delete'])
 
                     <div class="sidebar-new-title">{{ __('Advertisement Management') }}</div>
-                    @canany(['item-list', 'item-create', 'item-update', 'item-delete'])
+                    @canany(['advertisement-list', 'advertisement-update', 'advertisement-delete'])
                         <li class="sidebar-item">
                             <a href="{{ route('advertisement.index') }}" class='sidebar-link'>
                                 <i class="bi bi-ui-radios-grid"></i>
@@ -126,6 +126,7 @@
                     'car-model-update',
                     'car-model-delete',
                     'car-inspection-request-list',
+                    'car-inspection-request-update',
                     'car-inspection-package-list',
                     'car-inspection-package-create',
                     'car-inspection-package-update',
@@ -135,6 +136,7 @@
                     'inspection-ad-update',
                     'inspection-ad-delete',
                     'sell-for-me-request-list',
+                    'sell-for-me-request-update',
                     'sell-for-me-package-list',
                     'sell-for-me-package-create',
                     'sell-for-me-package-update',
@@ -163,7 +165,7 @@
                         </li>
                     @endcanany
 
-                    @canany(['car-inspection-request-list', 'car-inspection-package-list', 'car-inspection-package-create', 'car-inspection-package-update', 'car-inspection-package-delete', 'inspection-ad-list', 'inspection-ad-create', 'inspection-ad-update', 'inspection-ad-delete'])
+                    @canany(['car-inspection-request-list', 'car-inspection-request-update', 'car-inspection-package-list', 'car-inspection-package-create', 'car-inspection-package-update', 'car-inspection-package-delete', 'inspection-ad-list', 'inspection-ad-create', 'inspection-ad-update', 'inspection-ad-delete'])
                         <div class="sidebar-new-title mt-2">
                             @if ($pendingServices['car_inspection'] ?? false)<span class="service-pending-dot" title="{{ __('Pending request') }}" aria-label="{{ __('Pending request') }}"></span>@endif
                             {{ __('Car Inspection') }}
@@ -194,7 +196,7 @@
                         @endcanany
                     @endcanany
 
-                    @canany(['sell-for-me-request-list', 'sell-for-me-package-list', 'sell-for-me-package-create', 'sell-for-me-package-update', 'sell-for-me-package-delete'])
+                    @canany(['sell-for-me-request-list', 'sell-for-me-request-update', 'sell-for-me-package-list', 'sell-for-me-package-create', 'sell-for-me-package-update', 'sell-for-me-package-delete'])
                         <div class="sidebar-new-title mt-2">
                             @if ($pendingServices['sell_for_me'] ?? false)<span class="service-pending-dot" title="{{ __('Pending request') }}" aria-label="{{ __('Pending request') }}"></span>@endif
                             {{ __('Sell for Me') }}
@@ -437,7 +439,7 @@
                     </li>
                 @endcanany
 
-                @canany(['customer-list', 'customer-create', 'customer-update', 'customer-delete'])
+                @can('customer-list')
                     <div class="sidebar-new-title">{{ __('Customers') }}</div>
                     <li class="sidebar-item">
                         <a href="{{ url('customer') }}" class='sidebar-link'>
@@ -445,7 +447,7 @@
                             <span class="menu-item">{{ __('Customers') }}</span>
                         </a>
                     </li>
-                @endcanany
+                @endcan
 
                 @canany(['role-list', 'role-create', 'role-update', 'role-delete', 'staff-list', 'staff-create',
                     'staff-update', 'staff-delete'])
